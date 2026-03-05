@@ -78,7 +78,11 @@ const DashboardInspectionList = ({
     e.preventDefault()
     e.stopPropagation()
     toast.info('משכפל בדיקה...')
-    await duplicateInspection(inspection.id)
+    try {
+      await duplicateInspection(inspection.id)
+    } catch {
+      toast.error('שגיאה בשכפול הבדיקה')
+    }
   }
 
   const handleDelete = async () => {
@@ -202,7 +206,7 @@ const DashboardInspectionList = ({
               <InstallationBadge type={inspection.installation_type} />
               <StatusBadge status={inspection.status} approvalStatus={inspection.approval_status} />
               {/* Action buttons - visible on hover */}
-              <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+              <div className="flex items-center gap-1 transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
                 <Button
                   variant="ghost"
                   size="icon"

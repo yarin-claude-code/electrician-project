@@ -1,3 +1,5 @@
+import { redirect } from 'next/navigation'
+
 import { createClient } from '@/lib/supabase/server'
 import ProfileForm from '@/components/settings/profile-form'
 
@@ -18,11 +20,12 @@ export default async function SettingsPage() {
     const {
       data: { user },
     } = await supabase.auth.getUser()
-    email = user?.email ?? ''
+    if (!user) redirect('/auth/login')
+    email = user.email ?? ''
     const { data } = await supabase
       .from('profiles')
       .select('full_name, phone, license_number')
-      .eq('id', user!.id)
+      .eq('id', user.id)
       .single()
     if (data) {
       profile = {

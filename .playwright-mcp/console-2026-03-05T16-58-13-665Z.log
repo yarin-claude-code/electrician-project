@@ -1,0 +1,2 @@
+[     366ms] [ERROR] A bad HTTP response code (404) was received when fetching the script. @ :0
+[   35361ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://ifxnikbgnukbgdlavmes.supabase.co/auth/v1/signup:0

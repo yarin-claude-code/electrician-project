@@ -1,13 +1,7 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[]
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
 export interface Database {
-  PostgrestVersion: "12"
+  PostgrestVersion: '12'
   public: {
     Tables: {
       profiles: {

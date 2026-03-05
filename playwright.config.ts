@@ -1,4 +1,4 @@
-import { defineConfig } from '@playwright/test';
+import { defineConfig } from '@playwright/test'
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -9,4 +9,4 @@ export default defineConfig({
     viewport: { width: 1280, height: 800 },
   },
   reporter: [['list'], ['json', { outputFile: 'e2e-results.json' }]],
-});
+})

@@ -23,6 +23,7 @@ Read `supabase/schema.sql` and `src/lib/supabase/types.ts` in full.
 ## Step 2: Audit RLS Policies
 
 For every table in the schema, verify:
+
 - Has `ENABLE ROW LEVEL SECURITY`
 - Has at least one SELECT policy
 - Has INSERT/UPDATE/DELETE policies with `inspector_id = auth.uid()` enforcement
@@ -35,6 +36,7 @@ List any table that is missing or has weak RLS.
 ## Step 3: Type Sync Check
 
 Compare `types.ts` against `schema.sql`:
+
 - Every table must have a matching `Row`, `Insert`, and `Update` type
 - Column types must match (e.g. `uuid` → `string`, `timestamptz` → `string`, `boolean` → `boolean`)
 - No extra types in `types.ts` for tables that no longer exist
@@ -47,11 +49,13 @@ Fix any drift by updating `types.ts`.
 ## Step 4: Query Audit
 
 Grep for all Supabase query calls across `src/`:
+
 ```
 pattern: \.from\(
 ```
 
 For each query, check:
+
 - Selects only needed columns (not `select('*')` unless justified)
 - Nested relations don't cause N+1 (use `.select('*, related_table(*)')`)
 - Error is always handled (`const { data, error } = await ...` and `if (error) throw/return`)
@@ -62,6 +66,7 @@ For each query, check:
 ## Step 5: Auth Pattern Check
 
 Review `src/lib/supabase/client.ts`, `server.ts`, `middleware.ts`:
+
 - `createBrowserClient` used only in client components
 - `createServerClient` used only in server components / route handlers
 - Middleware correctly refreshes session
@@ -78,6 +83,7 @@ Check if `supabase/` has a `migrations/` directory. If not, recommend creating o
 ## Step 7: Report
 
 List all issues found, grouped by:
+
 1. RLS gaps (critical)
 2. Type drift (important)
 3. Query issues (important)

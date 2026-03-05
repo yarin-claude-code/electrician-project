@@ -28,7 +28,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="he" dir="rtl" className={`${geist.variable} ${heebo.variable}`}>
-      <body className="min-h-screen bg-background antialiased font-sans">
+      <body className="min-h-screen bg-background font-sans antialiased">
         {children}
         <Toaster richColors position="top-center" />
         <SwRegister />

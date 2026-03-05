@@ -1,7 +1,4 @@
 {
-  "enabledMcpjsonServers": [
-    "db",
-    "playwright"
-  ],
+  "enabledMcpjsonServers": ["db", "playwright"],
   "enableAllProjectMcpServers": true
 }

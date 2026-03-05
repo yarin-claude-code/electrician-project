@@ -18,17 +18,21 @@ import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { Loader2 } from 'lucide-react'
 
-const StepLoader = () => <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
+const StepLoader = () => (
+  <div className="flex justify-center py-12">
+    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+  </div>
+)
 
-const Step1GeneralInfo    = dynamic(() => import('./general-info'),      { loading: StepLoader })
-const Step2VisualChecks   = dynamic(() => import('./visual-checks'),     { loading: StepLoader })
-const Step3Instruments    = dynamic(() => import('./instruments'),       { loading: StepLoader })
-const Step4Panels         = dynamic(() => import('./panels'),            { loading: StepLoader })
-const Step5FaultLoop      = dynamic(() => import('./fault-loop'),        { loading: StepLoader })
-const Step6Defects        = dynamic(() => import('./defects'),           { loading: StepLoader })
-const Step7Recommendations = dynamic(() => import('./recommendations'),  { loading: StepLoader })
-const Step8Generator      = dynamic(() => import('./generator'),         { loading: StepLoader })
-const Step9Review         = dynamic(() => import('./review'),            { loading: StepLoader })
+const Step1GeneralInfo = dynamic(() => import('./general-info'), { loading: StepLoader })
+const Step2VisualChecks = dynamic(() => import('./visual-checks'), { loading: StepLoader })
+const Step3Instruments = dynamic(() => import('./instruments'), { loading: StepLoader })
+const Step4Panels = dynamic(() => import('./panels'), { loading: StepLoader })
+const Step5FaultLoop = dynamic(() => import('./fault-loop'), { loading: StepLoader })
+const Step6Defects = dynamic(() => import('./defects'), { loading: StepLoader })
+const Step7Recommendations = dynamic(() => import('./recommendations'), { loading: StepLoader })
+const Step8Generator = dynamic(() => import('./generator'), { loading: StepLoader })
+const Step9Review = dynamic(() => import('./review'), { loading: StepLoader })
 
 const ALL_STEP_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const
 const STEP_NUMBERS_WITHOUT_GENERATOR = [1, 2, 3, 4, 5, 6, 7, 9] as const
@@ -49,17 +53,11 @@ const WizardShell = (): React.ReactNode => {
   const { currentStep, setCurrentStep, isSaving, isOnline, totalSteps, completionPercent, state } =
     useWizard()
 
-  const steps = state.hasGenerator
-    ? STEP_LABELS
-    : STEP_LABELS.filter((_, i) => i !== 7) // Remove generator step
+  const steps = state.hasGenerator ? STEP_LABELS : STEP_LABELS.filter((_, i) => i !== 7) // Remove generator step
 
-  const stepNumbers = state.hasGenerator
-    ? ALL_STEP_NUMBERS
-    : STEP_NUMBERS_WITHOUT_GENERATOR // Skip step 8 if no generator (internally map to step 9)
+  const stepNumbers = state.hasGenerator ? ALL_STEP_NUMBERS : STEP_NUMBERS_WITHOUT_GENERATOR // Skip step 8 if no generator (internally map to step 9)
 
-  const currentInternalStep = state.hasGenerator
-    ? currentStep
-    : currentStep <= 7 ? currentStep : 9
+  const currentInternalStep = state.hasGenerator ? currentStep : currentStep <= 7 ? currentStep : 9
 
   const statusVariant = isOnline ? 'secondary' : 'destructive'
   const StatusIcon = isOnline ? Wifi : WifiOff
@@ -68,25 +66,27 @@ const WizardShell = (): React.ReactNode => {
   return (
     <div className="space-y-5">
       {/* Header card */}
-      <div className="rounded-2xl border border-border bg-card shadow-[0_2px_16px_0px_oklch(0.52_0.26_268/0.10)] overflow-hidden">
+      <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-[0_2px_16px_0px_oklch(0.52_0.26_268/0.10)]">
         {/* Top gradient bar */}
         <div className="h-1.5 bg-gradient-to-l from-primary via-primary/70 to-secondary" />
 
         <div className="px-5 pt-4 pb-3">
-          <div className="flex items-center justify-between mb-2">
+          <div className="mb-2 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               {/* Step badge */}
-              <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold shadow-sm">
+              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground shadow-sm">
                 {currentStep}
               </span>
               <div>
-                <p className="text-[11px] text-muted-foreground leading-none mb-0.5">שלב {currentStep} מתוך {totalSteps}</p>
-                <h2 className="font-bold text-foreground text-base leading-none">
+                <p className="mb-0.5 text-[11px] leading-none text-muted-foreground">
+                  שלב {currentStep} מתוך {totalSteps}
+                </p>
+                <h2 className="text-base leading-none font-bold text-foreground">
                   {steps[currentStep - 1]}
                 </h2>
               </div>
               {isSaving && (
-                <Badge variant="secondary" className="gap-1 text-[10px] px-2 py-0.5 animate-pulse">
+                <Badge variant="secondary" className="animate-pulse gap-1 px-2 py-0.5 text-[10px]">
                   <Save className="h-2.5 w-2.5" />
                   שומר...
                 </Badge>
@@ -94,10 +94,7 @@ const WizardShell = (): React.ReactNode => {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-xs text-muted-foreground">{completionPercent}%</span>
-              <Badge
-                variant={statusVariant}
-                className="gap-1 text-[10px] px-2 py-0.5"
-              >
+              <Badge variant={statusVariant} className="gap-1 px-2 py-0.5 text-[10px]">
                 <StatusIcon className="h-2.5 w-2.5" />
                 {statusLabel}
               </Badge>
@@ -111,7 +108,7 @@ const WizardShell = (): React.ReactNode => {
             aria-valuemin={0}
             aria-valuemax={100}
             aria-label={`התקדמות הבדיקה: ${completionPercent}%`}
-            className="relative h-2 rounded-full bg-muted overflow-hidden"
+            className="relative h-2 overflow-hidden rounded-full bg-muted"
           >
             <div
               className="absolute inset-y-0 right-0 rounded-full bg-primary transition-all duration-500"
@@ -121,16 +118,22 @@ const WizardShell = (): React.ReactNode => {
         </div>
 
         {/* Step dots — matches stepper-style.png: circles connected by lines */}
-        <div role="list" aria-label="שלבי הבדיקה" className="flex items-start justify-between px-4 pb-3 overflow-x-auto gap-1">
+        <div
+          role="list"
+          aria-label="שלבי הבדיקה"
+          className="flex items-start justify-between gap-1 overflow-x-auto px-4 pb-3"
+        >
           {steps.map((label, idx) => {
             const step = idx + 1
             const isDone = step < currentStep
             const isCurrent = step === currentStep
-            const stepIcon = isDone
-              ? <CheckCircle2 className="h-4 w-4 text-primary" />
-              : isCurrent
-                ? <CircleDot className="h-4 w-4 text-primary-foreground" />
-                : <Circle className="h-3 w-3 text-muted-foreground" />
+            const stepIcon = isDone ? (
+              <CheckCircle2 className="h-4 w-4 text-primary" />
+            ) : isCurrent ? (
+              <CircleDot className="h-4 w-4 text-primary-foreground" />
+            ) : (
+              <Circle className="h-3 w-3 text-muted-foreground" />
+            )
             return (
               <button
                 key={step}
@@ -139,22 +142,24 @@ const WizardShell = (): React.ReactNode => {
                 aria-current={isCurrent ? 'step' : undefined}
                 aria-label={`שלב ${step}: ${label}${isDone ? ' — הושלם' : isCurrent ? ' — נוכחי' : ''}`}
                 className={cn(
-                  'flex flex-col items-center gap-1 min-w-[52px] text-[10px] transition-all px-1',
+                  'flex min-w-[52px] flex-col items-center gap-1 px-1 text-[10px] transition-all',
                   isDone && 'cursor-pointer text-primary hover:text-primary/80',
-                  isCurrent && 'text-primary font-semibold scale-105',
-                  !isDone && !isCurrent && 'text-muted-foreground cursor-default'
+                  isCurrent && 'scale-105 font-semibold text-primary',
+                  !isDone && !isCurrent && 'cursor-default text-muted-foreground'
                 )}
                 disabled={step >= currentStep}
               >
-                <div className={cn(
-                  'w-6 h-6 rounded-full flex items-center justify-center transition-all',
-                  isDone && 'bg-secondary border border-primary/30',
-                  isCurrent && 'bg-primary shadow-[0_2px_8px_0px_oklch(0.52_0.26_268/0.4)]',
-                  !isDone && !isCurrent && 'bg-muted border border-border',
-                )}>
+                <div
+                  className={cn(
+                    'flex h-6 w-6 items-center justify-center rounded-full transition-all',
+                    isDone && 'border border-primary/30 bg-secondary',
+                    isCurrent && 'bg-primary shadow-[0_2px_8px_0px_oklch(0.52_0.26_268/0.4)]',
+                    !isDone && !isCurrent && 'border border-border bg-muted'
+                  )}
+                >
                   {stepIcon}
                 </div>
-                <span className="hidden sm:block text-center leading-tight">{label}</span>
+                <span className="hidden text-center leading-tight sm:block">{label}</span>
               </button>
             )
           })}
@@ -177,16 +182,26 @@ interface StepContentProps {
 
 const StepContent = ({ internalStep }: StepContentProps): React.ReactNode => {
   switch (internalStep) {
-    case 1: return <Step1GeneralInfo />
-    case 2: return <Step2VisualChecks />
-    case 3: return <Step3Instruments />
-    case 4: return <Step4Panels />
-    case 5: return <Step5FaultLoop />
-    case 6: return <Step6Defects />
-    case 7: return <Step7Recommendations />
-    case 8: return <Step8Generator />
-    case 9: return <Step9Review />
-    default: return null
+    case 1:
+      return <Step1GeneralInfo />
+    case 2:
+      return <Step2VisualChecks />
+    case 3:
+      return <Step3Instruments />
+    case 4:
+      return <Step4Panels />
+    case 5:
+      return <Step5FaultLoop />
+    case 6:
+      return <Step6Defects />
+    case 7:
+      return <Step7Recommendations />
+    case 8:
+      return <Step8Generator />
+    case 9:
+      return <Step9Review />
+    default:
+      return null
   }
 }
 
@@ -210,7 +225,7 @@ export const WizardNavButtons = ({
   const { goNext, goPrev, currentStep } = useWizard()
 
   return (
-    <div className="flex items-center justify-between pt-6 border-t mt-6">
+    <div className="mt-6 flex items-center justify-between border-t pt-6">
       <Button
         variant="outline"
         onClick={onPrev ?? goPrev}
@@ -221,11 +236,7 @@ export const WizardNavButtons = ({
         {prevLabel}
       </Button>
       {!isLastStep && (
-        <Button
-          onClick={onNext ?? goNext}
-          disabled={nextDisabled}
-          className="gap-2"
-        >
+        <Button onClick={onNext ?? goNext} disabled={nextDisabled} className="gap-2">
           {nextLabel}
           <ChevronLeft className="h-4 w-4" />
         </Button>

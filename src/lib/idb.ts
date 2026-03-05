@@ -45,7 +45,10 @@ const getDB = (): Promise<IDBPDatabase<InspectionDB>> => {
   return dbPromise
 }
 
-export const saveDraft = async (inspectionId: string, data: Record<string, unknown>): Promise<void> => {
+export const saveDraft = async (
+  inspectionId: string,
+  data: Record<string, unknown>
+): Promise<void> => {
   const db = await getDB()
   await db.put('drafts', {
     id: `inspection-${inspectionId}-draft`,
@@ -72,7 +75,14 @@ export const queuePhotoUpload = async (
 ): Promise<string> => {
   const db = await getDB()
   const id = `${inspectionId}-${field}-${Date.now()}`
-  await db.put('pendingUploads', { id, inspectionId, field, blob, createdAt: Date.now(), retryCount: 0 })
+  await db.put('pendingUploads', {
+    id,
+    inspectionId,
+    field,
+    blob,
+    createdAt: Date.now(),
+    retryCount: 0,
+  })
   return id
 }
 

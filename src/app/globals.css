@@ -1,6 +1,6 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -130,13 +130,21 @@
   body {
     @apply bg-background text-foreground;
   }
-  button, [role="button"], a, label[for], select, [data-radix-collection-item] {
+  button,
+  [role='button'],
+  a,
+  label[for],
+  select,
+  [data-radix-collection-item] {
     cursor: pointer;
   }
-  input, textarea, select {
+  input,
+  textarea,
+  select {
     cursor: text;
   }
-  input[type="checkbox"], input[type="radio"] {
+  input[type='checkbox'],
+  input[type='radio'] {
     cursor: pointer;
   }
 }

@@ -41,8 +41,11 @@ const Step6Defects = (): React.JSX.Element => {
 
   useEffect(() => {
     const loadDefects = async (): Promise<void> => {
-      const { data } = await supabase
-        .from('defects').select('*').eq('inspection_id', inspectionId).order('sort_order') as { data: Defect[] | null }
+      const { data } = (await supabase
+        .from('defects')
+        .select('*')
+        .eq('inspection_id', inspectionId)
+        .order('sort_order')) as { data: Defect[] | null }
       if (data) setDefects(data)
       setLoading(false)
     }
@@ -52,13 +55,19 @@ const Step6Defects = (): React.JSX.Element => {
   const addDefect = async (): Promise<void> => {
     const { data } = await supabase
       .from('defects')
-      .insert({ inspection_id: inspectionId, description: 'ליקוי חדש', severity: 'major', sort_order: defects.length })
-      .select().single()
+      .insert({
+        inspection_id: inspectionId,
+        description: 'ליקוי חדש',
+        severity: 'major',
+        sort_order: defects.length,
+      })
+      .select()
+      .single()
     if (data) setDefects((d) => [...d, data])
   }
 
   const updateDefect = async (id: string, updates: Partial<Defect>): Promise<void> => {
-    setDefects((d) => d.map((defect) => defect.id === id ? { ...defect, ...updates } : defect))
+    setDefects((d) => d.map((defect) => (defect.id === id ? { ...defect, ...updates } : defect)))
     await supabase.from('defects').update(updates).eq('id', id)
   }
 
@@ -86,26 +95,26 @@ const Step6Defects = (): React.JSX.Element => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold text-foreground">שלב 6: ליקויים</h2>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="mt-1 text-sm text-muted-foreground">
             {defects.length} ליקויים סה&quot;כ • {unresolvedCount} לא טופלו
             {criticalCount > 0 && ` • ${criticalCount} קריטיים`}
           </p>
         </div>
-        <Button onClick={addDefect} size="sm" className="bg-blue-900 hover:bg-blue-800 gap-2">
+        <Button onClick={addDefect} size="sm" className="gap-2 bg-blue-900 hover:bg-blue-800">
           <Plus className="h-4 w-4" />
           הוסף ליקוי
         </Button>
       </div>
 
       {criticalCount > 0 && (
-        <div className="flex items-center gap-2 rounded border border-red-300 bg-red-50 px-4 py-3 text-red-800 text-sm">
+        <div className="flex items-center gap-2 rounded border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800">
           <AlertTriangle className="h-4 w-4 flex-shrink-0" />
           <span>{criticalCount} ליקויים קריטיים מצריכים טיפול מיידי</span>
         </div>
       )}
 
       {defects.length === 0 ? (
-        <div className="py-12 text-center text-muted-foreground border-2 border-dashed rounded-lg">
+        <div className="rounded-lg border-2 border-dashed py-12 text-center text-muted-foreground">
           <p>אין ליקויים. ליקויים נוצרים אוטומטית מבדיקה חזותית או ניתן להוסיף ידנית.</p>
         </div>
       ) : (
@@ -114,7 +123,7 @@ const Step6Defects = (): React.JSX.Element => {
             <div
               key={defect.id}
               className={cn(
-                'rounded-lg border p-4 space-y-4 transition-opacity',
+                'space-y-4 rounded-lg border p-4 transition-opacity',
                 SEVERITY_COLORS[defect.severity ?? 'major'],
                 defect.resolved && 'opacity-60'
               )}
@@ -126,19 +135,26 @@ const Step6Defects = (): React.JSX.Element => {
                     onCheckedChange={(v) => updateDefect(defect.id, { resolved: Boolean(v) })}
                     id={`resolved-${defect.id}`}
                   />
-                  <span className="font-medium text-sm">ליקוי {idx + 1}</span>
-                  <Badge className={cn(
-                    'text-xs',
-                    defect.severity === 'critical' && 'bg-red-600',
-                    defect.severity === 'major' && 'bg-amber-500',
-                    defect.severity === 'minor' && 'bg-blue-600',
-                  )}>
+                  <span className="text-sm font-medium">ליקוי {idx + 1}</span>
+                  <Badge
+                    className={cn(
+                      'text-xs',
+                      defect.severity === 'critical' && 'bg-red-600',
+                      defect.severity === 'major' && 'bg-amber-500',
+                      defect.severity === 'minor' && 'bg-blue-600'
+                    )}
+                  >
                     {SEVERITY_LABELS[defect.severity ?? 'major']}
                   </Badge>
-                  {defect.resolved && <Badge variant="outline" className="text-xs">טופל</Badge>}
+                  {defect.resolved && (
+                    <Badge variant="outline" className="text-xs">
+                      טופל
+                    </Badge>
+                  )}
                 </div>
                 <Button
-                  variant="ghost" size="sm"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => removeDefect(defect.id)}
                   className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
                 >
@@ -160,7 +176,9 @@ const Step6Defects = (): React.JSX.Element => {
                   <Label>חומרה</Label>
                   <Select
                     value={defect.severity ?? 'major'}
-                    onValueChange={(v) => updateDefect(defect.id, { severity: v as Defect['severity'] })}
+                    onValueChange={(v) =>
+                      updateDefect(defect.id, { severity: v as Defect['severity'] })
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -177,17 +195,24 @@ const Step6Defects = (): React.JSX.Element => {
                   <Input
                     type="date"
                     value={defect.target_repair_date ?? ''}
-                    onChange={(e) => updateDefect(defect.id, { target_repair_date: e.target.value })}
+                    onChange={(e) =>
+                      updateDefect(defect.id, { target_repair_date: e.target.value })
+                    }
                     dir="ltr"
                   />
                 </div>
                 <div className="space-y-2 sm:col-span-2">
                   <label className="cursor-pointer">
                     <input
-                      type="file" accept="image/*" className="hidden"
-                      onChange={(e) => { const f = e.target.files?.[0]; if (f) handlePhoto(defect.id, f) }}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const f = e.target.files?.[0]
+                        if (f) handlePhoto(defect.id, f)
+                      }}
                     />
-                    <span className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer">
+                    <span className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-3 py-1.5 text-sm transition-colors hover:bg-accent hover:text-accent-foreground">
                       <Camera className="h-4 w-4" />
                       {defect.photo_url ? 'החלף תמונה' : 'צרף תמונה'}
                     </span>
@@ -197,7 +222,7 @@ const Step6Defects = (): React.JSX.Element => {
                       <img
                         src={defect.photo_url}
                         alt="תמונת ליקוי"
-                        className="rounded border max-h-40 object-contain"
+                        className="max-h-40 rounded border object-contain"
                       />
                     </div>
                   )}

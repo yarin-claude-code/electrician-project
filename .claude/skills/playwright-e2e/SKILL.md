@@ -33,6 +33,7 @@ List what exists. Identify gaps.
 ## Step 3: Write Tests
 
 ### Auth Tests (`tests/auth.spec.ts`)
+
 ```ts
 import { test, expect } from '@playwright/test'
 
@@ -58,14 +59,18 @@ test('shows error on invalid credentials', async ({ page }) => {
 ```
 
 ### Dashboard Tests (`tests/dashboard.spec.ts`)
+
 Write tests for:
+
 - KPI cards visible after login (mock auth state)
 - Charts render without blank canvas
 - Inspection list shows rows
 - AppNav Hebrew labels visible
 
 ### Wizard Tests (`tests/wizard.spec.ts`)
+
 Write tests for:
+
 - Creating a new inspection navigates to wizard
 - Step 1 form fields accept input
 - "הבא" (Next) button advances to step 2
@@ -88,6 +93,7 @@ If tests fail, read the error and fix them. Do not retry the same failing comman
 ## Step 5: RTL-Specific Assertions
 
 For every page test, assert:
+
 ```ts
 await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')
 ```
@@ -99,6 +105,7 @@ For forms, verify labels appear to the right of inputs (RTL layout).
 ## Step 6: Report
 
 List:
+
 - Tests written (count + file)
 - Tests passing / failing
 - Any issues found in the app (not the test) during testing

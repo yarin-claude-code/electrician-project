@@ -7,7 +7,11 @@ import type { Inspection } from '@/lib/supabase/types'
 
 const DEV_INSPECTION_ID = '00000000-0000-0000-0000-000000000001'
 
-export default async function InspectionPage({ params }: { params: Promise<{ id: string }> }): Promise<React.ReactElement> {
+export default async function InspectionPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}): Promise<React.ReactElement> {
   const { id } = await params
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 
@@ -21,22 +25,26 @@ export default async function InspectionPage({ params }: { params: Promise<{ id:
   }
 
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  const { data: inspection } = await supabase
+  const { data: inspection } = (await supabase
     .from('inspections')
     .select('*')
     .eq('id', id)
     .eq('inspector_id', user.id)
-    .single() as { data: Inspection | null; error: unknown }
+    .single()) as { data: Inspection | null; error: unknown }
   if (!inspection) notFound()
 
   const initialData: Partial<WizardState> = {
     clientName: inspection.client_name ?? '',
     installationType: inspection.installation_type ?? '',
     address: inspection.address ?? '',
-    connectionSizeAmps: inspection.connection_size_amps ? String(inspection.connection_size_amps) : '',
+    connectionSizeAmps: inspection.connection_size_amps
+      ? String(inspection.connection_size_amps)
+      : '',
     ownerName: inspection.owner_name ?? '',
     ownerPhone: inspection.owner_phone ?? '',
     ownerEmail: inspection.owner_email ?? '',

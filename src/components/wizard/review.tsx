@@ -37,9 +37,21 @@ const Step9Review = (): React.JSX.Element => {
   useEffect(() => {
     async function loadSummary() {
       const [defectsRes, failsRes, inspectionRes] = await Promise.all([
-        supabase.from('defects').select('id', { count: 'exact', head: true }).eq('inspection_id', inspectionId).eq('resolved', false),
-        supabase.from('visual_checks').select('id', { count: 'exact', head: true }).eq('inspection_id', inspectionId).eq('result', 'fail'),
-        supabase.from('inspections').select('approval_status, inspector_signature, status').eq('id', inspectionId).single(),
+        supabase
+          .from('defects')
+          .select('id', { count: 'exact', head: true })
+          .eq('inspection_id', inspectionId)
+          .eq('resolved', false),
+        supabase
+          .from('visual_checks')
+          .select('id', { count: 'exact', head: true })
+          .eq('inspection_id', inspectionId)
+          .eq('result', 'fail'),
+        supabase
+          .from('inspections')
+          .select('approval_status, inspector_signature, status')
+          .eq('id', inspectionId)
+          .single(),
       ])
       setDefectCount(defectsRes.count ?? 0)
       setFailCount(failsRes.count ?? 0)
@@ -53,7 +65,7 @@ const Step9Review = (): React.JSX.Element => {
     loadSummary()
   }, [inspectionId]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Auto-compute approval
+  // Auto-compute approval when counts change
   useEffect(() => {
     if (defectCount === 0 && failCount === 0) {
       setApprovalStatus('approved')
@@ -91,13 +103,16 @@ const Step9Review = (): React.JSX.Element => {
       signatureData = sigCanvasRef.current.toDataURL('image/png')
     }
 
-    const { error } = await supabase.from('inspections').update({
-      approval_status: approvalStatus,
-      inspector_signature: signatureData,
-      status: 'submitted',
-      submitted_at: new Date().toISOString(),
-      completion_percentage: 100,
-    }).eq('id', inspectionId)
+    const { error } = await supabase
+      .from('inspections')
+      .update({
+        approval_status: approvalStatus,
+        inspector_signature: signatureData,
+        status: 'submitted',
+        submitted_at: new Date().toISOString(),
+        completion_percentage: 100,
+      })
+      .eq('id', inspectionId)
 
     if (error) {
       toast.error('שגיאה בשמירה')
@@ -109,20 +124,34 @@ const Step9Review = (): React.JSX.Element => {
   }
 
   const installationTypeLabel =
-    state.installationType === 'residential' ? 'מגורים' :
-    state.installationType === 'commercial' ? 'מסחרי' :
-    'תעשייתי'
+    state.installationType === 'residential'
+      ? 'מגורים'
+      : state.installationType === 'commercial'
+        ? 'מסחרי'
+        : 'תעשייתי'
 
   const generatorLabel = state.hasGenerator ? 'כן' : 'לא'
 
-  const pdfButtonIcon = generatingPdf ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />
+  const pdfButtonIcon = generatingPdf ? (
+    <Loader2 className="h-4 w-4 animate-spin" />
+  ) : (
+    <FileText className="h-4 w-4" />
+  )
   const pdfButtonLabel = generatingPdf ? 'מייצר דוח...' : 'צור דוח PDF'
-  const submitButtonIcon = submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />
+  const submitButtonIcon = submitting ? (
+    <Loader2 className="h-4 w-4 animate-spin" />
+  ) : (
+    <CheckCircle2 className="h-4 w-4" />
+  )
   const submitButtonLabel = submitted ? 'הוגש ✓' : submitting ? 'מגיש...' : 'הגש בדיקה'
 
   const approvalConfig = {
     approved: { label: 'מאושר', color: 'bg-green-600', icon: <CheckCircle2 className="h-5 w-5" /> },
-    approved_with_recommendations: { label: 'מאושר עם המלצות', color: 'bg-amber-500', icon: <AlertTriangle className="h-5 w-5" /> },
+    approved_with_recommendations: {
+      label: 'מאושר עם המלצות',
+      color: 'bg-amber-500',
+      icon: <AlertTriangle className="h-5 w-5" />,
+    },
     rejected: { label: 'נדחה', color: 'bg-red-600', icon: <XCircle className="h-5 w-5" /> },
   }
 
@@ -130,21 +159,36 @@ const Step9Review = (): React.JSX.Element => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold text-foreground">שלב {state.hasGenerator ? 9 : 8}: סיכום וחתימה</h2>
+      <h2 className="text-xl font-bold text-foreground">
+        שלב {state.hasGenerator ? 9 : 8}: סיכום וחתימה
+      </h2>
 
       {/* Summary cards */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <SummaryCard label="ליקויים פתוחים" value={defectCount} color={defectCount > 0 ? 'text-red-600' : 'text-green-600'} />
-        <SummaryCard label="כשלים בבדיקה חזותית" value={failCount} color={failCount > 0 ? 'text-red-600' : 'text-green-600'} />
+        <SummaryCard
+          label="ליקויים פתוחים"
+          value={defectCount}
+          color={defectCount > 0 ? 'text-red-600' : 'text-green-600'}
+        />
+        <SummaryCard
+          label="כשלים בבדיקה חזותית"
+          value={failCount}
+          color={failCount > 0 ? 'text-red-600' : 'text-green-600'}
+        />
         <SummaryCard label="מותקן ב" value={installationTypeLabel} color="text-slate-700" />
         <SummaryCard label="גנרטור" value={generatorLabel} color="text-slate-700" />
       </div>
 
       {/* Approval status */}
       <Card>
-        <CardHeader><CardTitle className="text-base">סטטוס אישור</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle className="text-base">סטטוס אישור</CardTitle>
+        </CardHeader>
         <CardContent className="space-y-4">
-          <Select value={approvalStatus} onValueChange={(v) => setApprovalStatus(v as ApprovalStatus)}>
+          <Select
+            value={approvalStatus}
+            onValueChange={(v) => setApprovalStatus(v as ApprovalStatus)}
+          >
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
@@ -156,14 +200,16 @@ const Step9Review = (): React.JSX.Element => {
           </Select>
           <div className={`flex items-center gap-3 rounded-lg p-4 text-white ${current.color}`}>
             {current.icon}
-            <span className="font-semibold text-lg">{current.label}</span>
+            <span className="text-lg font-semibold">{current.label}</span>
           </div>
         </CardContent>
       </Card>
 
       {/* Signature */}
       <Card>
-        <CardHeader><CardTitle className="text-base">חתימה דיגיטלית</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle className="text-base">חתימה דיגיטלית</CardTitle>
+        </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label>תאריך</Label>
@@ -215,7 +261,7 @@ const Step9Review = (): React.JSX.Element => {
           onClick={handleSubmit}
           disabled={submitting || submitted || !isOnline}
           title={!isOnline ? 'לא ניתן להגיש במצב לא מקוון' : undefined}
-          className="bg-blue-900 hover:bg-blue-800 gap-2"
+          className="gap-2 bg-blue-900 hover:bg-blue-800"
         >
           {submitButtonIcon}
           {submitButtonLabel}
@@ -239,7 +285,7 @@ const SummaryCard = ({ label, value, color }: SummaryCardProps): React.ReactNode
   <Card>
     <CardContent className="pt-4 pb-4">
       <p className="text-xs text-muted-foreground">{label}</p>
-      <p className={`text-2xl font-bold mt-1 ${color}`}>{value}</p>
+      <p className={`mt-1 text-2xl font-bold ${color}`}>{value}</p>
     </CardContent>
   </Card>
 )

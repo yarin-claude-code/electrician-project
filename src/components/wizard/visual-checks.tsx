@@ -14,7 +14,11 @@ import { Badge } from '@/components/ui/badge'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { VISUAL_CHECK_CATEGORIES, type VisualCheckItem, type VisualCheckCategory } from '@/lib/visual-check-items'
+import {
+  VISUAL_CHECK_CATEGORIES,
+  type VisualCheckItem,
+  type VisualCheckCategory,
+} from '@/lib/visual-check-items'
 import type { VisualCheck } from '@/lib/supabase/types'
 import { fetchVisualCheckCategories } from '@/lib/lookup'
 import { CheckCircle, XCircle, MinusCircle, Camera, AlertTriangle } from 'lucide-react'
@@ -50,7 +54,12 @@ const Step2VisualChecks = (): React.JSX.Element => {
       if (data) {
         const map: Record<string, LocalCheck> = {}
         data.forEach((c: VisualCheck) => {
-          map[c.item_key] = { result: c.result as CheckResult, notes: c.notes ?? '', photo_url: c.photo_url, id: c.id }
+          map[c.item_key] = {
+            result: c.result as CheckResult,
+            notes: c.notes ?? '',
+            photo_url: c.photo_url,
+            id: c.id,
+          }
         })
         setChecks(map)
       }
@@ -60,11 +69,7 @@ const Step2VisualChecks = (): React.JSX.Element => {
   }, [inspectionId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const updateCheck = useCallback(
-    async (
-      category: string,
-      item: VisualCheckItem,
-      updates: Partial<LocalCheck>
-    ) => {
+    async (category: string, item: VisualCheckItem, updates: Partial<LocalCheck>) => {
       const prev = checks[item.key] ?? { result: null, notes: '', photo_url: null }
       const next: LocalCheck = { ...prev, ...updates }
       setChecks((c) => ({ ...c, [item.key]: next }))
@@ -120,15 +125,26 @@ const Step2VisualChecks = (): React.JSX.Element => {
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold text-foreground">שלב 2: בדיקה חזותית של לוח</h2>
         <div className="flex gap-2">
-          <Badge className="bg-green-600 gap-1"><CheckCircle className="h-3 w-3" />{passCount}</Badge>
-          <Badge variant="destructive" className="gap-1"><XCircle className="h-3 w-3" />{failCount}</Badge>
-          <Badge variant="secondary" className="gap-1"><MinusCircle className="h-3 w-3" />{naCount}</Badge>
-          <Badge variant="outline">{passCount + failCount + naCount}/{totalItems}</Badge>
+          <Badge className="gap-1 bg-green-600">
+            <CheckCircle className="h-3 w-3" />
+            {passCount}
+          </Badge>
+          <Badge variant="destructive" className="gap-1">
+            <XCircle className="h-3 w-3" />
+            {failCount}
+          </Badge>
+          <Badge variant="secondary" className="gap-1">
+            <MinusCircle className="h-3 w-3" />
+            {naCount}
+          </Badge>
+          <Badge variant="outline">
+            {passCount + failCount + naCount}/{totalItems}
+          </Badge>
         </div>
       </div>
 
       {failCount > 0 && (
-        <div className="flex items-center gap-2 rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-amber-800 text-sm">
+        <div className="flex items-center gap-2 rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
           <AlertTriangle className="h-4 w-4 flex-shrink-0" />
           <span>{failCount} ליקויים זוהו ונוצרו אוטומטית בשלב 6</span>
         </div>
@@ -145,10 +161,14 @@ const Step2VisualChecks = (): React.JSX.Element => {
                   <span className="font-medium">{category.labelHe}</span>
                   <span className="text-xs text-muted-foreground">({category.label})</span>
                   {catFail > 0 && (
-                    <Badge variant="destructive" className="text-xs">{catFail} ליקויים</Badge>
+                    <Badge variant="destructive" className="text-xs">
+                      {catFail} ליקויים
+                    </Badge>
                   )}
                   {catFail === 0 && catPass > 0 && (
-                    <Badge className="bg-green-600 text-xs">{catPass}/{category.items.length}</Badge>
+                    <Badge className="bg-green-600 text-xs">
+                      {catPass}/{category.items.length}
+                    </Badge>
                   )}
                 </div>
               </AccordionTrigger>
@@ -226,51 +246,54 @@ const CheckItem = ({
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1">
-          <p className="font-medium text-sm">{item.labelHe}</p>
-          <p className="text-xs text-muted-foreground mt-0.5">{item.label}</p>
+          <p className="text-sm font-medium">{item.labelHe}</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">{item.label}</p>
         </div>
-        <div className="flex items-center gap-1 flex-shrink-0">
+        <div className="flex flex-shrink-0 items-center gap-1">
           <Button
             size="sm"
             variant={check.result === 'pass' ? 'default' : 'outline'}
-            className={cn('h-8 px-2 gap-1', check.result === 'pass' && 'bg-green-600 hover:bg-green-700 border-green-600')}
+            className={cn(
+              'h-8 gap-1 px-2',
+              check.result === 'pass' && 'border-green-600 bg-green-600 hover:bg-green-700'
+            )}
             onClick={() => onResultChange(check.result === 'pass' ? null : 'pass')}
           >
             <CheckCircle className="h-4 w-4" />
-            <span className="hidden sm:inline text-xs">תקין</span>
+            <span className="hidden text-xs sm:inline">תקין</span>
           </Button>
           <Button
             size="sm"
             variant={check.result === 'fail' ? 'destructive' : 'outline'}
-            className="h-8 px-2 gap-1"
+            className="h-8 gap-1 px-2"
             onClick={() => onResultChange(check.result === 'fail' ? null : 'fail')}
           >
             <XCircle className="h-4 w-4" />
-            <span className="hidden sm:inline text-xs">ליקוי</span>
+            <span className="hidden text-xs sm:inline">ליקוי</span>
           </Button>
           <Button
             size="sm"
             variant={check.result === 'na' ? 'secondary' : 'outline'}
-            className="h-8 px-2 gap-1"
+            className="h-8 gap-1 px-2"
             onClick={() => onResultChange(check.result === 'na' ? null : 'na')}
           >
             <MinusCircle className="h-4 w-4" />
-            <span className="hidden sm:inline text-xs">לא רלוונטי</span>
+            <span className="hidden text-xs sm:inline">לא רלוונטי</span>
           </Button>
         </div>
       </div>
-      <div className="mt-3 flex items-center gap-2 flex-wrap">
+      <div className="mt-3 flex flex-wrap items-center gap-2">
         <Button
           variant="ghost"
           size="sm"
-          className="h-7 text-xs gap-1 text-muted-foreground"
+          className="h-7 gap-1 text-xs text-muted-foreground"
           onClick={() => setShowNotes(!showNotes)}
         >
           {showNotes ? 'הסתר הערה' : '+ הוסף הערה'}
         </Button>
         <label className="cursor-pointer">
           <input type="file" accept="image/*" className="hidden" onChange={handlePhoto} />
-          <span className="inline-flex items-center gap-1 h-7 rounded-md px-2 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+          <span className="inline-flex h-7 items-center gap-1 rounded-md px-2 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground">
             <Camera className="h-3 w-3" />
             {check.photo_url ? 'החלף תמונה' : 'צרף תמונה'}
           </span>
@@ -281,7 +304,7 @@ const CheckItem = ({
           <img
             src={check.photo_url}
             alt="תמונה מצורפת"
-            className="rounded border max-h-32 object-contain"
+            className="max-h-32 rounded border object-contain"
           />
         </div>
       )}

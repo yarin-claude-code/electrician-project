@@ -1,9 +1,19 @@
 'use client'
 
 import {
-  PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend,
-  BarChart, Bar, XAxis, YAxis, CartesianGrid,
-  LineChart, Line,
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  Legend,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  LineChart,
+  Line,
 } from 'recharts'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -55,9 +65,7 @@ const DashboardCharts = ({
                 ))}
               </Pie>
               <Tooltip formatter={(v) => [v, '']} />
-              <Legend
-                formatter={(value) => <span className="text-sm">{value}</span>}
-              />
+              <Legend formatter={(value) => <span className="text-sm">{value}</span>} />
             </PieChart>
           </ResponsiveContainer>
         </CardContent>

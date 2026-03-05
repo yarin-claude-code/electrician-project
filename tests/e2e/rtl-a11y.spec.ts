@@ -182,28 +182,28 @@ test('review step has signature canvas with aria-label', async ({ page }) => {
 
 test('no console errors on dashboard', async ({ page }) => {
   const errors: string[] = []
-  page.on('console', msg => { if (msg.type() === 'error') errors.push(msg.text()) })
+  page.on('console', (msg) => {
+    if (msg.type() === 'error') errors.push(msg.text())
+  })
   await page.goto('/dashboard')
   await page.waitForLoadState('networkidle')
   await page.waitForTimeout(1000)
-  const fatalErrors = errors.filter(e =>
-    !e.includes('favicon') &&
-    !e.includes('404') &&
-    !e.includes('supabase') // expected in demo mode
+  const fatalErrors = errors.filter(
+    (e) => !e.includes('favicon') && !e.includes('404') && !e.includes('supabase') // expected in demo mode
   )
   expect(fatalErrors).toHaveLength(0)
 })
 
 test('no console errors on wizard', async ({ page }) => {
   const errors: string[] = []
-  page.on('console', msg => { if (msg.type() === 'error') errors.push(msg.text()) })
+  page.on('console', (msg) => {
+    if (msg.type() === 'error') errors.push(msg.text())
+  })
   await page.goto('/inspections/00000000-0000-0000-0000-000000000001')
   await page.waitForLoadState('networkidle')
   await page.waitForTimeout(1500)
-  const fatalErrors = errors.filter(e =>
-    !e.includes('favicon') &&
-    !e.includes('404') &&
-    !e.includes('supabase')
+  const fatalErrors = errors.filter(
+    (e) => !e.includes('favicon') && !e.includes('404') && !e.includes('supabase')
   )
   expect(fatalErrors).toHaveLength(0)
 })

@@ -4,12 +4,19 @@ import type { Database } from './types'
 
 const fakeId = (): string => 'dev-' + Math.random().toString(36).slice(2, 10)
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createStubClient = (): any => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const chain = (pendingInsert: any = null): any => {
     const result = pendingInsert
-      ? { data: { id: fakeId(), created_at: new Date().toISOString(), updated_at: new Date().toISOString(), ...pendingInsert }, error: null, count: null }
+      ? {
+          data: {
+            id: fakeId(),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            ...pendingInsert,
+          },
+          error: null,
+          count: null,
+        }
       : { data: null, error: null, count: null }
 
     return {
@@ -23,14 +30,24 @@ const createStubClient = (): any => {
       order: () => chain(pendingInsert),
       limit: () => chain(pendingInsert),
       head: () => chain(pendingInsert),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      single: () => { const r: any = { ...result }; r.then = (resolve: (v: unknown) => void) => Promise.resolve(resolve(result)); return r },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      maybeSingle: () => { const r: any = { ...result }; r.then = (resolve: (v: unknown) => void) => Promise.resolve(resolve(result)); return r },
-      then: (resolve: (v: unknown) => void) => resolve(pendingInsert
-        ? { data: [result.data], error: null, count: 1 }
-        : { data: [], error: null, count: 0 }
-      ),
+
+      single: () => {
+        const r: any = { ...result }
+        r.then = (resolve: (v: unknown) => void) => Promise.resolve(resolve(result))
+        return r
+      },
+
+      maybeSingle: () => {
+        const r: any = { ...result }
+        r.then = (resolve: (v: unknown) => void) => Promise.resolve(resolve(result))
+        return r
+      },
+      then: (resolve: (v: unknown) => void) =>
+        resolve(
+          pendingInsert
+            ? { data: [result.data], error: null, count: 1 }
+            : { data: [], error: null, count: 0 }
+        ),
     }
   }
 

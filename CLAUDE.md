@@ -92,5 +92,12 @@ Full schema with RLS policies in `supabase/schema.sql`. Types in `src/lib/supaba
 - `NEXT_PUBLIC_SUPABASE_URL` — Supabase project URL
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` — Supabase anonymous key
 
+## Git Workflow
+- **Branching:** For every big task, create a feature branch off `main` (e.g., `feat/add-pdf-export`, `fix/wizard-validation`).
+- **Small commits:** Commit after each completed sub-task with a clear message describing what was done.
+- **PR when done:** When the task is complete, push the branch and create a Pull Request targeting `main`.
+- **Self-review:** Before requesting review, read through the PR diff, fix any issues (code quality, bugs, missing edge cases), and push fixes as additional commits.
+- **CI must pass:** Ensure the CI pipeline (lint, type-check, format, build) passes before merging.
+
 ## Frontend Design Rules
 See [.claude/FRONTEND_DESIGN.md](./.claude/FRONTEND_DESIGN.md) — must be followed for all UI work.

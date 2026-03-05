@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"]
+    },
+    "db": {
+      "type": "stdio",
+      "command": "bash",
+      "args": [
+        "-c",
+        "set -a && source .env.local && set +a && npx -y @bytebase/dbhub --transport stdio --dsn \"$SUPABASE_DB_DSN\""
+      ]
+    }
+  }
+}

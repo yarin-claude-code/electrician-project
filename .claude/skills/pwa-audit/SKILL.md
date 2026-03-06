@@ -9,6 +9,7 @@ allowed-tools: Read, Grep, Glob, Edit, Bash
 You are a PWA expert specializing in offline-first apps. Audit this Serwist-powered PWA.
 
 **Key files:**
+
 - `src/sw.ts` — Service worker
 - `src/lib/idb.ts` — IndexedDB drafts + upload queue
 - `public/manifest.json` — PWA manifest
@@ -20,6 +21,7 @@ You are a PWA expert specializing in offline-first apps. Audit this Serwist-powe
 ## Step 1: Manifest Completeness
 
 Read `public/manifest.json`. Required fields for installability:
+
 - `name` and `short_name`
 - `start_url`
 - `display: "standalone"` or `"fullscreen"`
@@ -34,6 +36,7 @@ Fix any missing fields.
 ## Step 2: Service Worker Caching
 
 Read `src/sw.ts`. Check:
+
 - Static assets cached with `CacheFirst` strategy
 - Next.js chunks cached with `StaleWhileRevalidate`
 - Supabase API calls: should NOT be cached (contains auth-sensitive data)
@@ -45,6 +48,7 @@ Read `src/sw.ts`. Check:
 ## Step 3: IndexedDB Draft Persistence
 
 Read `src/lib/idb.ts`. Check:
+
 - Draft save is called on every step navigation (verify in wizard-context)
 - Draft restore on page load populates the wizard correctly
 - Draft is cleared after successful Supabase sync
@@ -56,6 +60,7 @@ Read `src/lib/idb.ts`. Check:
 ## Step 4: Online/Offline Sync
 
 Read `src/hooks/use-online-status.ts`. Check:
+
 - Uses `navigator.onLine` + `online`/`offline` event listeners
 - Is there a "came back online" trigger that flushes the pending upload queue?
 - Does the wizard auto-save trigger a Supabase sync when back online?
@@ -65,6 +70,7 @@ Read `src/hooks/use-online-status.ts`. Check:
 ## Step 5: SW Registration
 
 Read `src/components/sw-register.tsx`. Check:
+
 - SW registered after page load (not blocking render)
 - Update available notification shown to user
 - Registration errors handled gracefully (no silent failures)
@@ -74,6 +80,7 @@ Read `src/components/sw-register.tsx`. Check:
 ## Step 6: Offline UX
 
 Check if the app shows a Hebrew offline indicator when `isOnline === false`:
+
 - Toast or banner: "אתה במצב לא מקוון — הנתונים נשמרים מקומית"
 - Save button should still work (saves to IndexedDB)
 - Submit/finalize should be disabled with explanation

@@ -15,6 +15,7 @@ You are a security auditor. Perform a systematic security review of this Next.js
 Read `src/middleware.ts` and `src/lib/supabase/middleware.ts`.
 
 Check:
+
 - Every route under `/(app)/` is protected (unauthenticated → redirect to login)
 - The matcher pattern covers all app routes, not just some
 - Session refresh happens correctly — is there a race condition where an expired session gets through?
@@ -25,13 +26,17 @@ Check:
 ## Step 2: API Route Auth
 
 Grep for all API route files:
+
 ```
 Glob: src/app/api/**/*.ts src/app/api/**/*.tsx
 ```
 
 For each route handler, verify the FIRST thing it does is:
+
 ```ts
-const { data: { user } } = await supabase.auth.getUser()
+const {
+  data: { user },
+} = await supabase.auth.getUser()
 if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 ```
 
@@ -42,6 +47,7 @@ Flag any route that accesses the DB before checking auth.
 ## Step 3: RLS Policy Audit
 
 Read `supabase/schema.sql`. For every table:
+
 - Has RLS enabled?
 - All operations (SELECT, INSERT, UPDATE, DELETE) have policies?
 - Policies use `auth.uid()` correctly, not `current_user` or raw user input?
@@ -52,12 +58,14 @@ Read `supabase/schema.sql`. For every table:
 ## Step 4: Secret / Credential Exposure
 
 Grep for hardcoded secrets:
+
 ```
 pattern: (password|secret|key|token|api_key)\s*=\s*['"][^'"]{8,}
 path: src/
 ```
 
 Also check:
+
 - `.env` files are in `.gitignore`
 - No Supabase service role key used in client-side code
 - `NEXT_PUBLIC_` prefixed vars are safe to expose (not private keys)
@@ -69,6 +77,7 @@ Also check:
 Read `src/app/api/reports/[id]/route.tsx` (or the PDF route).
 
 Check:
+
 - Does it validate the `id` param before DB lookup (UUID format check)?
 - Does user-controlled text get sanitized before being placed in the PDF?
 - Could an attacker inject SVG/HTML into PDF fields via inspection data?
@@ -81,6 +90,7 @@ Check:
 Read `src/sw.ts`.
 
 Check:
+
 - Are Supabase API responses (containing auth tokens or user data) cached?
 - Is the cache keyed correctly so user A can't read user B's cached data?
 - Are auth headers stripped before caching responses?
@@ -92,6 +102,7 @@ Check:
 Read `src/lib/idb.ts`.
 
 Check:
+
 - Is data stored in IndexedDB encrypted or is it plaintext?
 - Could another tab/origin read inspection drafts?
 - Is the pending upload queue properly validated before re-sending?
@@ -101,12 +112,14 @@ Check:
 ## Step 8: Input Validation
 
 Grep for `zod` schemas:
+
 ```
 pattern: z\.object\(
 path: src/
 ```
 
 Verify:
+
 - All form inputs have Zod validation
 - Server-side validation exists (not just client-side) for API routes
 - No `z.any()` used for user input
@@ -126,6 +139,7 @@ Report any high/critical vulnerabilities found.
 ## Step 10: Report
 
 Group findings by severity:
+
 - 🔴 Critical — fix immediately (auth bypass, data exposure)
 - 🟠 High — fix before deploy (injection, missing validation)
 - 🟡 Medium — fix soon (cache leaks, missing sanitization)

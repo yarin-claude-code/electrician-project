@@ -30,7 +30,9 @@ export const updateSession = async (request: NextRequest): Promise<NextResponse>
     },
   })
 
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
   const { pathname } = request.nextUrl
 
   if (!user && !pathname.startsWith('/auth')) {

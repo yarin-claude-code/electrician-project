@@ -15,6 +15,7 @@ You are an accessibility expert specializing in Hebrew RTL web applications. Aud
 Read `src/app/layout.tsx`.
 
 Verify:
+
 - `<html lang="he" dir="rtl">` is set
 - `<main>` landmark exists in `src/app/(app)/layout.tsx`
 - Page has a single `<h1>` per route
@@ -27,6 +28,7 @@ Verify:
 Read `src/components/wizard/wizard-shell.tsx`.
 
 Check:
+
 - Step list should use `role="tablist"` or `role="list"` with `aria-label="שלבי הבדיקה"`
 - Current step should have `aria-current="step"`
 - Completed steps should have visual + aria indication
@@ -38,6 +40,7 @@ Check:
 ## Step 3: Form Field Accessibility
 
 Grep for `<input`, `<select`, `<textarea` in `src/components/wizard/`:
+
 - Every input must have an associated `<label>` (via `htmlFor` + `id`, or `aria-label`)
 - Labels must be in Hebrew
 - Error messages must use `aria-describedby` pointing to the error element
@@ -48,6 +51,7 @@ Grep for `<input`, `<select`, `<textarea` in `src/components/wizard/`:
 ## Step 4: Form Error Announcements
 
 Check how react-hook-form errors are rendered:
+
 - Error messages should be in a container with `role="alert"` or `aria-live="polite"`
 - Errors should be in Hebrew
 - Error container should not disappear instantly (give screen readers time)
@@ -59,6 +63,7 @@ Check how react-hook-form errors are rendered:
 Read the signature canvas usage in `src/components/wizard/review.tsx`.
 
 The canvas is completely inaccessible by default. Add:
+
 - `role="img"` on the canvas with `aria-label="אזור חתימה"`
 - A keyboard-accessible "clear signature" button
 - An accessible alternative: text input for typed signature name as fallback
@@ -71,6 +76,7 @@ The canvas is completely inaccessible by default. Add:
 Read `src/app/globals.css`.
 
 For each OKLCH color variable:
+
 - Text on background must be ≥ 4.5:1 contrast ratio (WCAG AA)
 - Large text (18pt+) must be ≥ 3:1
 - UI components (buttons, inputs) must be ≥ 3:1
@@ -82,6 +88,7 @@ Check both light and dark mode values. Flag any that may fail (OKLCH lightness <
 ## Step 7: Keyboard Navigation
 
 Using Playwright MCP, navigate the login page with keyboard only:
+
 1. `Tab` through fields
 2. `Enter` to submit
 3. Verify focus trap does NOT exist (unless in a modal dialog)
@@ -92,6 +99,7 @@ Using Playwright MCP, navigate the login page with keyboard only:
 ## Step 8: Focus Management
 
 In the wizard:
+
 - When advancing to next step, focus should move to the top of the new step (h2 or first input)
 - When an error occurs, focus should move to the first errored field
 
@@ -102,6 +110,7 @@ Check `wizard-shell.tsx` for focus management after step transitions.
 ## Step 9: Report + Fix
 
 List all issues with:
+
 - WCAG criterion violated (e.g. 1.3.1 Info and Relationships)
 - Severity (Critical / Major / Minor)
 - File + line number

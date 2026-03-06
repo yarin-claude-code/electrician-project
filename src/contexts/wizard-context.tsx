@@ -81,7 +81,11 @@ interface WizardProviderProps {
   children: ReactNode
 }
 
-export const WizardProvider = ({ inspectionId, initialData, children }: WizardProviderProps): React.ReactNode => {
+export const WizardProvider = ({
+  inspectionId,
+  initialData,
+  children,
+}: WizardProviderProps): React.ReactNode => {
   const [currentStep, setCurrentStep] = useState(1)
   const [state, setState] = useState<WizardState>({ ...defaultState, ...initialData })
   const [isSaving, setIsSaving] = useState(false)
@@ -126,24 +130,29 @@ export const WizardProvider = ({ inspectionId, initialData, children }: WizardPr
       // Sync to Supabase if online
       if (navigator.onLine) {
         const supabase = createClient()
-        await supabase.from('inspections').update({
-          client_name: newState.clientName || null,
-          installation_type: newState.installationType || null,
-          address: newState.address || null,
-          connection_size_amps: newState.connectionSizeAmps ? parseInt(newState.connectionSizeAmps) : null,
-          owner_name: newState.ownerName || null,
-          owner_phone: newState.ownerPhone || null,
-          owner_email: newState.ownerEmail || null,
-          electrician_name: newState.electricianName || null,
-          electrician_phone: newState.electricianPhone || null,
-          electrician_email: newState.electricianEmail || null,
-          designer_name: newState.designerName || null,
-          designer_phone: newState.designerPhone || null,
-          designer_email: newState.designerEmail || null,
-          has_generator: newState.hasGenerator,
-          inspection_date: newState.inspectionDate || null,
-          status: 'in_progress',
-        }).eq('id', inspectionId)
+        await supabase
+          .from('inspections')
+          .update({
+            client_name: newState.clientName || null,
+            installation_type: newState.installationType || null,
+            address: newState.address || null,
+            connection_size_amps: newState.connectionSizeAmps
+              ? parseInt(newState.connectionSizeAmps)
+              : null,
+            owner_name: newState.ownerName || null,
+            owner_phone: newState.ownerPhone || null,
+            owner_email: newState.ownerEmail || null,
+            electrician_name: newState.electricianName || null,
+            electrician_phone: newState.electricianPhone || null,
+            electrician_email: newState.electricianEmail || null,
+            designer_name: newState.designerName || null,
+            designer_phone: newState.designerPhone || null,
+            designer_email: newState.designerEmail || null,
+            has_generator: newState.hasGenerator,
+            inspection_date: newState.inspectionDate || null,
+            status: 'in_progress',
+          })
+          .eq('id', inspectionId)
       }
       setIsSaving(false)
     },
@@ -206,12 +215,19 @@ export const WizardProvider = ({ inspectionId, initialData, children }: WizardPr
       goNext,
       goPrev,
     }),
-    [inspectionId, currentStep, state, updateState, isSaving, isOnline, totalSteps, completionPercent, goNext, goPrev]
+    [
+      inspectionId,
+      currentStep,
+      state,
+      updateState,
+      isSaving,
+      isOnline,
+      totalSteps,
+      completionPercent,
+      goNext,
+      goPrev,
+    ]
   )
 
-  return (
-    <WizardContext.Provider value={contextValue}>
-      {children}
-    </WizardContext.Provider>
-  )
+  return <WizardContext.Provider value={contextValue}>{children}</WizardContext.Provider>
 }

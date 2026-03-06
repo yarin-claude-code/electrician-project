@@ -88,7 +88,7 @@ const Step3Instruments = (): React.JSX.Element => {
         <Button
           onClick={addInstrument}
           size="sm"
-          className="bg-blue-900 hover:bg-blue-800 gap-2"
+          className="gap-2 bg-blue-900 hover:bg-blue-800"
           disabled={instruments.length >= MAX_INSTRUMENTS}
         >
           <Plus className="h-4 w-4" />
@@ -97,7 +97,7 @@ const Step3Instruments = (): React.JSX.Element => {
       </div>
 
       {instruments.length === 0 ? (
-        <div className="py-12 text-center text-muted-foreground border-2 border-dashed rounded-lg">
+        <div className="rounded-lg border-2 border-dashed py-12 text-center text-muted-foreground">
           <p>אין מכשירים. לחץ &quot;הוסף מכשיר&quot; להוסיף.</p>
         </div>
       ) : (
@@ -108,16 +108,16 @@ const Step3Instruments = (): React.JSX.Element => {
               <div
                 key={instrument.id}
                 className={cn(
-                  'rounded-lg border p-4 space-y-4',
+                  'space-y-4 rounded-lg border p-4',
                   status === 'warn' && 'border-amber-300 bg-amber-50',
                   status === 'expired' && 'border-red-300 bg-red-50'
                 )}
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-medium text-sm">מכשיר {idx + 1}</span>
+                  <span className="text-sm font-medium">מכשיר {idx + 1}</span>
                   <div className="flex items-center gap-2">
                     {status === 'warn' && (
-                      <Badge className="bg-amber-500 gap-1 text-xs">
+                      <Badge className="gap-1 bg-amber-500 text-xs">
                         <AlertTriangle className="h-3 w-3" />
                         כיול מתקרב לפקיעה
                       </Badge>
@@ -150,7 +150,9 @@ const Step3Instruments = (): React.JSX.Element => {
                       </SelectTrigger>
                       <SelectContent>
                         {instrumentTypes.map((t) => (
-                          <SelectItem key={t.key} value={t.label_he}>{t.label_he}</SelectItem>
+                          <SelectItem key={t.key} value={t.label_he}>
+                            {t.label_he}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -168,7 +170,9 @@ const Step3Instruments = (): React.JSX.Element => {
                     <Label>מספר סידורי</Label>
                     <Input
                       value={instrument.serial_number ?? ''}
-                      onChange={(e) => updateInstrument(instrument.id, { serial_number: e.target.value })}
+                      onChange={(e) =>
+                        updateInstrument(instrument.id, { serial_number: e.target.value })
+                      }
                       placeholder="S/N"
                       dir="ltr"
                     />
@@ -178,7 +182,9 @@ const Step3Instruments = (): React.JSX.Element => {
                     <Input
                       type="date"
                       value={instrument.calibration_date ?? ''}
-                      onChange={(e) => updateInstrument(instrument.id, { calibration_date: e.target.value })}
+                      onChange={(e) =>
+                        updateInstrument(instrument.id, { calibration_date: e.target.value })
+                      }
                       dir="ltr"
                     />
                   </div>

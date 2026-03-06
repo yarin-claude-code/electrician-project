@@ -7,6 +7,7 @@ Run a comprehensive code quality scan across the entire codebase. This skill orc
 ## What It Does
 
 Runs ALL of these audits:
+
 1. **Yarin Code Practices** — Arrow functions, return types, no `any`, naming, imports
 2. **Next.js Best Practices** — App Router patterns, server/client split, metadata, error boundaries
 3. **React Best Practices** — Context re-renders, memoization, hook correctness
@@ -38,17 +39,20 @@ Invoke with: `/code-quality-scan`
 
 ### Summary Table
 
-| Audit | Issues Found | Auto-Fixed | Manual Review |
-|-------|-------------|------------|---------------|
-| Yarin Practices | X | Y | Z |
-| Next.js | ... | ... | ... |
-| ... | ... | ... | ... |
+| Audit           | Issues Found | Auto-Fixed | Manual Review |
+| --------------- | ------------ | ---------- | ------------- |
+| Yarin Practices | X            | Y          | Z             |
+| Next.js         | ...          | ...        | ...           |
+| ...             | ...          | ...        | ...           |
 
 ### Critical Issues (must fix before deploy)
+
 - List of blocking issues
 
 ### Warnings (should fix)
+
 - List of non-blocking improvements
 
 ### Info (nice to have)
+
 - List of optional enhancements

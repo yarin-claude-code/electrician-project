@@ -80,7 +80,9 @@ const getVoltageColor = (val: number | null): string => {
 const Step4Panels = (): React.JSX.Element => {
   const { inspectionId, state } = useWizard()
   const [panels, setPanels] = useState<Panel[]>([])
-  const [measurements, setMeasurements] = useState<Record<string, Record<number, Partial<CircuitMeasurement>>>>({})
+  const [measurements, setMeasurements] = useState<
+    Record<string, Record<number, Partial<CircuitMeasurement>>>
+  >({})
   const [loading, setLoading] = useState(true)
   const [panelTypes, setPanelTypes] = useState<LookupOption[]>([])
   const supabase = createClient()
@@ -92,14 +94,27 @@ const Step4Panels = (): React.JSX.Element => {
     fetchLookup('panel_type').then(setPanelTypes)
     async function load() {
       const { data: panelData } = await supabase
-        .from('panels').select('*, circuit_measurements(*)').eq('inspection_id', inspectionId).order('sort_order')
+        .from('panels')
+        .select('*, circuit_measurements(*)')
+        .eq('inspection_id', inspectionId)
+        .order('sort_order')
       if (panelData) {
         const allMeasurements: Record<string, Record<number, Partial<CircuitMeasurement>>> = {}
-        const panelsOnly = panelData.map(({ circuit_measurements: cms, ...p }: { circuit_measurements: CircuitMeasurement[]; [key: string]: unknown }) => {
-          allMeasurements[p.id as string] = {}
-          ;(cms as CircuitMeasurement[])?.forEach((m) => { allMeasurements[p.id as string][m.circuit_number] = m })
-          return p
-        })
+        const panelsOnly = panelData.map(
+          ({
+            circuit_measurements: cms,
+            ...p
+          }: {
+            circuit_measurements: CircuitMeasurement[]
+            [key: string]: unknown
+          }) => {
+            allMeasurements[p.id as string] = {}
+            ;(cms as CircuitMeasurement[])?.forEach((m) => {
+              allMeasurements[p.id as string][m.circuit_number] = m
+            })
+            return p
+          }
+        )
         setPanels(panelsOnly)
         setMeasurements(allMeasurements)
       }
@@ -109,11 +124,17 @@ const Step4Panels = (): React.JSX.Element => {
   }, [inspectionId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function addPanel() {
-    const defaultName = panels.length === 0 ? 'לוח ראשי' : panels.length === 1 ? 'לוח משנה' : `לוח ${panels.length + 1}`
+    const defaultName =
+      panels.length === 0
+        ? 'לוח ראשי'
+        : panels.length === 1
+          ? 'לוח משנה'
+          : `לוח ${panels.length + 1}`
     const { data } = await supabase
       .from('panels')
       .insert({ inspection_id: inspectionId, sort_order: panels.length, panel_name: defaultName })
-      .select().single()
+      .select()
+      .single()
     if (data) {
       setPanels((p) => [...p, data])
       setMeasurements((m) => ({ ...m, [data.id]: {} }))
@@ -122,17 +143,31 @@ const Step4Panels = (): React.JSX.Element => {
 
   async function removePanel(id: string) {
     setPanels((p) => p.filter((panel) => panel.id !== id))
-    setMeasurements((m) => { const next = { ...m }; delete next[id]; return next })
+    setMeasurements((m) => {
+      const next = { ...m }
+      delete next[id]
+      return next
+    })
     await supabase.from('panels').delete().eq('id', id)
   }
 
   async function updatePanelName(id: string, name: string) {
-    setPanels((p) => p.map((panel) => panel.id === id ? { ...panel, panel_name: name } : panel))
+    setPanels((p) => p.map((panel) => (panel.id === id ? { ...panel, panel_name: name } : panel)))
     await supabase.from('panels').update({ panel_name: name }).eq('id', id)
   }
 
-  async function setCellValue(panelId: string, circuit: number, field: string, value: string | null) {
-    const parsed = value === '' || value === null ? null : (field === 'overcurrent_protection' || field === 'phase_sequence' ? value : parseFloat(value))
+  async function setCellValue(
+    panelId: string,
+    circuit: number,
+    field: string,
+    value: string | null
+  ) {
+    const parsed =
+      value === '' || value === null
+        ? null
+        : field === 'overcurrent_protection' || field === 'phase_sequence'
+          ? value
+          : parseFloat(value)
     setMeasurements((m) => ({
       ...m,
       [panelId]: {
@@ -142,16 +177,26 @@ const Step4Panels = (): React.JSX.Element => {
     }))
     const existing = measurements[panelId]?.[circuit]
     if (existing?.id) {
-      await supabase.from('circuit_measurements').update({ [field]: parsed }).eq('id', existing.id)
+      await supabase
+        .from('circuit_measurements')
+        .update({ [field]: parsed })
+        .eq('id', existing.id)
     } else {
       const { data } = await supabase
         .from('circuit_measurements')
-        .upsert({ panel_id: panelId, circuit_number: circuit, [field]: parsed }, { onConflict: 'panel_id,circuit_number' })
-        .select('id').single()
+        .upsert(
+          { panel_id: panelId, circuit_number: circuit, [field]: parsed },
+          { onConflict: 'panel_id,circuit_number' }
+        )
+        .select('id')
+        .single()
       if (data) {
         setMeasurements((m) => ({
           ...m,
-          [panelId]: { ...m[panelId], [circuit]: { ...(m[panelId]?.[circuit] ?? {}), id: data.id, [field]: parsed } },
+          [panelId]: {
+            ...m[panelId],
+            [circuit]: { ...(m[panelId]?.[circuit] ?? {}), id: data.id, [field]: parsed },
+          },
         }))
       }
     }
@@ -163,13 +208,14 @@ const Step4Panels = (): React.JSX.Element => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold text-foreground">שלב 4: מדידות לוח</h2>
-        <Button onClick={addPanel} size="sm" className="bg-blue-900 hover:bg-blue-800 gap-2">
-          <Plus className="h-4 w-4" />הוסף לוח
+        <Button onClick={addPanel} size="sm" className="gap-2 bg-blue-900 hover:bg-blue-800">
+          <Plus className="h-4 w-4" />
+          הוסף לוח
         </Button>
       </div>
 
       {panels.length === 0 ? (
-        <div className="py-12 text-center text-muted-foreground border-2 border-dashed rounded-lg">
+        <div className="rounded-lg border-2 border-dashed py-12 text-center text-muted-foreground">
           <p>לחץ &quot;הוסף לוח&quot; להוסיף לוח חשמל</p>
         </div>
       ) : (
@@ -216,22 +262,29 @@ function PanelMatrix({
   onCellChange: (circuit: number, field: string, value: string | null) => void
 }) {
   return (
-    <div className="rounded-lg border bg-white shadow-sm overflow-hidden">
-      <div className="flex items-center justify-between border-b px-4 py-3 bg-slate-50">
+    <div className="overflow-hidden rounded-lg border bg-white shadow-sm">
+      <div className="flex items-center justify-between border-b bg-slate-50 px-4 py-3">
         <Select
-          value={panelTypes.some(t => t.label_he === panel.panel_name) ? panel.panel_name : 'אחר'}
+          value={panelTypes.some((t) => t.label_he === panel.panel_name) ? panel.panel_name : 'אחר'}
           onValueChange={(val) => onNameChange(val === 'אחר' ? panel.panel_name : val)}
         >
-          <SelectTrigger className="h-8 w-48 font-medium text-sm">
+          <SelectTrigger className="h-8 w-48 text-sm font-medium">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
             {panelTypes.map((t) => (
-              <SelectItem key={t.key} value={t.label_he}>{t.label_he}</SelectItem>
+              <SelectItem key={t.key} value={t.label_he}>
+                {t.label_he}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
-        <Button variant="ghost" size="sm" onClick={onRemove} className="text-red-500 hover:text-red-700 h-8 w-8 p-0">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onRemove}
+          className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
+        >
           <Trash2 className="h-4 w-4" />
         </Button>
       </div>
@@ -239,17 +292,25 @@ function PanelMatrix({
         <table className="w-full text-xs">
           <thead>
             <tr className="border-b bg-slate-100">
-              <th className="px-3 py-2 text-right font-medium sticky right-0 bg-slate-100 min-w-[120px] z-10">פרמטר</th>
-              <th className="px-2 py-2 text-right font-medium text-muted-foreground min-w-[40px]">יחידה</th>
+              <th className="sticky right-0 z-10 min-w-[120px] bg-slate-100 px-3 py-2 text-right font-medium">
+                פרמטר
+              </th>
+              <th className="min-w-[40px] px-2 py-2 text-right font-medium text-muted-foreground">
+                יחידה
+              </th>
               {CIRCUITS.map((c) => (
-                <th key={c} className="px-2 py-2 text-center font-medium min-w-[70px]">מעגל {c}</th>
+                <th key={c} className="min-w-[70px] px-2 py-2 text-center font-medium">
+                  מעגל {c}
+                </th>
               ))}
             </tr>
           </thead>
           <tbody>
             {/* Insulation rows */}
             <tr className="bg-blue-50">
-              <td colSpan={14} className="px-3 py-1.5 font-semibold text-blue-900">התנגדות בידוד</td>
+              <td colSpan={14} className="px-3 py-1.5 font-semibold text-blue-900">
+                התנגדות בידוד
+              </td>
             </tr>
             {insRows.map((row) => (
               <MeasurementRow
@@ -264,7 +325,9 @@ function PanelMatrix({
             ))}
             {/* Other rows */}
             <tr className="bg-slate-50">
-              <td colSpan={14} className="px-3 py-1.5 font-semibold text-slate-700">מדידות נוספות</td>
+              <td colSpan={14} className="px-3 py-1.5 font-semibold text-slate-700">
+                מדידות נוספות
+              </td>
             </tr>
             {OTHER_ROWS.map((row) => (
               <MeasurementRow
@@ -279,7 +342,9 @@ function PanelMatrix({
             ))}
             {/* Voltage rows */}
             <tr className="bg-yellow-50">
-              <td colSpan={14} className="px-3 py-1.5 font-semibold text-yellow-800">מתח</td>
+              <td colSpan={14} className="px-3 py-1.5 font-semibold text-yellow-800">
+                מתח
+              </td>
             </tr>
             {voltageRows.map((row) => (
               <MeasurementRow
@@ -315,11 +380,15 @@ function MeasurementRow({
   onCellChange: (circuit: number, field: string, value: string | null) => void
 }) {
   return (
-    <tr className="border-b hover:bg-slate-50 transition-colors">
-      <td className="px-3 py-1.5 font-medium sticky right-0 bg-white">{label}</td>
+    <tr className="border-b transition-colors hover:bg-slate-50">
+      <td className="sticky right-0 bg-white px-3 py-1.5 font-medium">{label}</td>
       <td className="px-2 py-1.5 text-muted-foreground">{unit}</td>
       {CIRCUITS.map((c) => {
-        const val = (data[c]?.[field as keyof CircuitMeasurement]) as number | string | null | undefined
+        const val = data[c]?.[field as keyof CircuitMeasurement] as
+          | number
+          | string
+          | null
+          | undefined
         const numVal = typeof val === 'number' ? val : null
         const strVal = typeof val === 'string' ? val : ''
         const insColor = type === 'ins' ? getInsulationColor(numVal) : ''
@@ -327,11 +396,8 @@ function MeasurementRow({
         return (
           <td key={c} className="px-1 py-1">
             {type === 'pf' ? (
-              <Select
-                value={strVal || ''}
-                onValueChange={(v) => onCellChange(c, field, v)}
-              >
-                <SelectTrigger className="h-7 text-xs w-20">
+              <Select value={strVal || ''} onValueChange={(v) => onCellChange(c, field, v)}>
+                <SelectTrigger className="h-7 w-20 text-xs">
                   <SelectValue placeholder="-" />
                 </SelectTrigger>
                 <SelectContent>
@@ -344,14 +410,14 @@ function MeasurementRow({
               <Input
                 type="number"
                 step="0.01"
-                className={cn('h-7 text-xs w-16 text-center', insColor, voltColor)}
+                className={cn('h-7 w-16 text-center text-xs', insColor, voltColor)}
                 value={numVal !== null ? String(numVal) : ''}
                 onChange={(e) => onCellChange(c, field, e.target.value)}
                 dir="ltr"
               />
             )}
             {type === 'ins' && numVal !== null && numVal < 0.5 && (
-              <AlertTriangle className="h-3 w-3 text-red-500 mx-auto" />
+              <AlertTriangle className="mx-auto h-3 w-3 text-red-500" />
             )}
           </td>
         )

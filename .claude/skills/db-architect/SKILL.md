@@ -17,11 +17,13 @@ You are a PostgreSQL performance expert. Audit the schema and query patterns.
 ## Step 1: Index Audit
 
 Read `supabase/schema.sql`. For every table, check:
+
 - Foreign keys have indexes (e.g. `inspector_id`, `inspection_id` columns)
 - Columns used in `WHERE` clauses in common queries have indexes
 - `created_at` has an index if used for sorting/filtering
 
 Common missing indexes to check:
+
 ```sql
 -- These should exist:
 CREATE INDEX IF NOT EXISTS idx_inspections_inspector_id ON inspections(inspector_id);
@@ -39,9 +41,11 @@ Output SQL for any missing indexes.
 ## Step 2: Trigger Audit
 
 Check that all tables have:
+
 ```sql
 updated_at TIMESTAMPTZ DEFAULT NOW()
 ```
+
 ...and a trigger that updates it on every UPDATE. If missing, provide the SQL.
 
 ---
@@ -49,10 +53,12 @@ updated_at TIMESTAMPTZ DEFAULT NOW()
 ## Step 3: Dashboard Query Analysis
 
 Read `src/lib/dashboard-data.ts`. Check if KPI values are:
+
 - Computed in JavaScript (bad — should be DB aggregation)
 - Fetched with a single efficient query
 
 If KPIs are computed client-side, recommend PostgreSQL views:
+
 ```sql
 CREATE OR REPLACE VIEW dashboard_kpis AS
 SELECT
@@ -69,6 +75,7 @@ GROUP BY inspector_id;
 ## Step 4: N+1 Query Detection
 
 Grep for repeated `.from(` calls inside loops:
+
 ```
 pattern: for.*\n.*\.from\(
 path: src/
@@ -87,6 +94,7 @@ Check if tables have `COMMENT ON TABLE` and `COMMENT ON COLUMN` statements. If n
 ## Step 6: Report
 
 Output:
+
 1. Missing index SQL (ready to run)
 2. Missing trigger SQL
 3. Recommended views SQL

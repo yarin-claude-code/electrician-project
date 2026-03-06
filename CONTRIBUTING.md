@@ -47,24 +47,24 @@ npx playwright test --ui
 
 When you change a source file, run the corresponding test(s):
 
-| Changed file | Test to run | Scenario |
-|---|---|---|
-| `src/components/wizard/general-info.tsx` | `tests/e2e/e2e-test.spec.ts` | S5 – Wizard flow |
-| `src/components/wizard/visual-checks.tsx` | `tests/e2e/e2e-test.spec.ts` | S5 – Wizard flow |
-| `src/components/wizard/instruments.tsx` | `tests/e2e/e2e-test.spec.ts` | S5 – Wizard flow |
-| `src/components/wizard/panels.tsx` | `tests/e2e/e2e-test.spec.ts` | S5 – Wizard flow |
-| `src/components/wizard/fault-loop.tsx` | `tests/e2e/e2e-test.spec.ts` | S5 – Wizard flow |
-| `src/components/wizard/defects.tsx` | `tests/e2e/e2e-test.spec.ts` | S5 – Wizard flow |
-| `src/components/wizard/recommendations.tsx` | `tests/e2e/e2e-test.spec.ts` | S5 – Wizard flow |
-| `src/components/wizard/generator.tsx` | `tests/e2e/e2e-test.spec.ts` | S5 – Wizard flow |
-| `src/components/wizard/review.tsx` | `tests/e2e/e2e-test.spec.ts` | S5 – Wizard flow |
-| `src/components/wizard/wizard-shell.tsx` | `tests/e2e/e2e-test.spec.ts` | S5 – Wizard flow |
-| `src/app/auth/login/page.tsx` | `tests/e2e/e2e-s1-auth.spec.ts`, `tests/e2e/e2e-s1-login-direct.spec.ts` | S1 – Auth |
-| `src/components/app-nav.tsx` | `tests/e2e/e2e-nav-color.spec.ts` | Nav colour regression |
-| `src/app/(app)/dashboard/page.tsx` | `tests/e2e/e2e-test.spec.ts` | S5 – Dashboard |
-| `src/components/dashboard/charts.tsx` | `tests/e2e/e2e-test.spec.ts` | S5 – Dashboard |
-| `src/components/dashboard/inspection-list.tsx` | `tests/e2e/e2e-test.spec.ts` | S5 – Dashboard |
-| `src/lib/dashboard-data.ts` | `tests/e2e/e2e-test.spec.ts` | S5 – Dashboard |
+| Changed file                                   | Test to run                                                              | Scenario              |
+| ---------------------------------------------- | ------------------------------------------------------------------------ | --------------------- |
+| `src/components/wizard/general-info.tsx`       | `tests/e2e/e2e-test.spec.ts`                                             | S5 – Wizard flow      |
+| `src/components/wizard/visual-checks.tsx`      | `tests/e2e/e2e-test.spec.ts`                                             | S5 – Wizard flow      |
+| `src/components/wizard/instruments.tsx`        | `tests/e2e/e2e-test.spec.ts`                                             | S5 – Wizard flow      |
+| `src/components/wizard/panels.tsx`             | `tests/e2e/e2e-test.spec.ts`                                             | S5 – Wizard flow      |
+| `src/components/wizard/fault-loop.tsx`         | `tests/e2e/e2e-test.spec.ts`                                             | S5 – Wizard flow      |
+| `src/components/wizard/defects.tsx`            | `tests/e2e/e2e-test.spec.ts`                                             | S5 – Wizard flow      |
+| `src/components/wizard/recommendations.tsx`    | `tests/e2e/e2e-test.spec.ts`                                             | S5 – Wizard flow      |
+| `src/components/wizard/generator.tsx`          | `tests/e2e/e2e-test.spec.ts`                                             | S5 – Wizard flow      |
+| `src/components/wizard/review.tsx`             | `tests/e2e/e2e-test.spec.ts`                                             | S5 – Wizard flow      |
+| `src/components/wizard/wizard-shell.tsx`       | `tests/e2e/e2e-test.spec.ts`                                             | S5 – Wizard flow      |
+| `src/app/auth/login/page.tsx`                  | `tests/e2e/e2e-s1-auth.spec.ts`, `tests/e2e/e2e-s1-login-direct.spec.ts` | S1 – Auth             |
+| `src/components/app-nav.tsx`                   | `tests/e2e/e2e-nav-color.spec.ts`                                        | Nav colour regression |
+| `src/app/(app)/dashboard/page.tsx`             | `tests/e2e/e2e-test.spec.ts`                                             | S5 – Dashboard        |
+| `src/components/dashboard/charts.tsx`          | `tests/e2e/e2e-test.spec.ts`                                             | S5 – Dashboard        |
+| `src/components/dashboard/inspection-list.tsx` | `tests/e2e/e2e-test.spec.ts`                                             | S5 – Dashboard        |
+| `src/lib/dashboard-data.ts`                    | `tests/e2e/e2e-test.spec.ts`                                             | S5 – Dashboard        |
 
 ## Development
 

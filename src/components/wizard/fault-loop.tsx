@@ -12,16 +12,22 @@ import { Separator } from '@/components/ui/separator'
 
 interface FaultLoopData {
   id?: string
-  zph1_n: string; zph1_e: string
-  zph2_n: string; zph2_e: string
-  zph3_n: string; zph3_e: string
+  zph1_n: string
+  zph1_e: string
+  zph2_n: string
+  zph2_e: string
+  zph3_n: string
+  zph3_e: string
   z_1ph_2ph: string
 }
 
 const defaultData: FaultLoopData = {
-  zph1_n: '', zph1_e: '',
-  zph2_n: '', zph2_e: '',
-  zph3_n: '', zph3_e: '',
+  zph1_n: '',
+  zph1_e: '',
+  zph2_n: '',
+  zph2_e: '',
+  zph3_n: '',
+  zph3_e: '',
   z_1ph_2ph: '',
 }
 
@@ -47,11 +53,11 @@ const Step5FaultLoop = (): React.JSX.Element => {
 
   useEffect(() => {
     const loadFaultLoop = async (): Promise<void> => {
-      const { data: row } = await supabase
+      const { data: row } = (await supabase
         .from('fault_loop')
         .select('*')
         .eq('inspection_id', inspectionId)
-        .single() as { data: FaultLoop | null }
+        .single()) as { data: FaultLoop | null }
       if (row) {
         setData({
           id: row.id,
@@ -84,9 +90,12 @@ const Step5FaultLoop = (): React.JSX.Element => {
     }
 
     // Pre-calculate
-    const ph1n = calcIsc(next.zph1_n); const ph1e = calcIsc(next.zph1_e)
-    const ph2n = calcIsc(next.zph2_n); const ph2e = calcIsc(next.zph2_e)
-    const ph3n = calcIsc(next.zph3_n); const ph3e = calcIsc(next.zph3_e)
+    const ph1n = calcIsc(next.zph1_n)
+    const ph1e = calcIsc(next.zph1_e)
+    const ph2n = calcIsc(next.zph2_n)
+    const ph2e = calcIsc(next.zph2_e)
+    const ph3n = calcIsc(next.zph3_n)
+    const ph3e = calcIsc(next.zph3_e)
 
     const saveData = {
       ...dbData,
@@ -98,10 +107,9 @@ const Step5FaultLoop = (): React.JSX.Element => {
       isc3ph_3: ph3n.isc3ph !== '-' ? parseFloat(ph3n.isc3ph) : null,
     }
 
-    await supabase.from('fault_loop').upsert(
-      { id: data.id, ...saveData },
-      { onConflict: 'inspection_id' }
-    )
+    await supabase
+      .from('fault_loop')
+      .upsert({ id: data.id, ...saveData }, { onConflict: 'inspection_id' })
   }
 
   const phases = is3ph
@@ -128,7 +136,9 @@ const Step5FaultLoop = (): React.JSX.Element => {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-2">
-                    <Label className="text-xs">Z<sub>ph-N</sub> (Ω)</Label>
+                    <Label className="text-xs">
+                      Z<sub>ph-N</sub> (Ω)
+                    </Label>
                     <Input
                       type="number"
                       step="0.001"
@@ -138,13 +148,19 @@ const Step5FaultLoop = (): React.JSX.Element => {
                       dir="ltr"
                       className="text-sm"
                     />
-                    <div className="rounded bg-blue-50 p-2 text-xs space-y-1">
-                      <p>Isc2ph: <strong>{nCalc.isc2ph}</strong></p>
-                      <p>Isc3ph: <strong>{nCalc.isc3ph}</strong></p>
+                    <div className="space-y-1 rounded bg-blue-50 p-2 text-xs">
+                      <p>
+                        Isc2ph: <strong>{nCalc.isc2ph}</strong>
+                      </p>
+                      <p>
+                        Isc3ph: <strong>{nCalc.isc3ph}</strong>
+                      </p>
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-xs">Z<sub>ph-E</sub> (Ω)</Label>
+                    <Label className="text-xs">
+                      Z<sub>ph-E</sub> (Ω)
+                    </Label>
                     <Input
                       type="number"
                       step="0.001"
@@ -154,9 +170,13 @@ const Step5FaultLoop = (): React.JSX.Element => {
                       dir="ltr"
                       className="text-sm"
                     />
-                    <div className="rounded bg-blue-50 p-2 text-xs space-y-1">
-                      <p>Isc2ph: <strong>{eCalc.isc2ph}</strong></p>
-                      <p>Isc3ph: <strong>{eCalc.isc3ph}</strong></p>
+                    <div className="space-y-1 rounded bg-blue-50 p-2 text-xs">
+                      <p>
+                        Isc2ph: <strong>{eCalc.isc2ph}</strong>
+                      </p>
+                      <p>
+                        Isc3ph: <strong>{eCalc.isc3ph}</strong>
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -169,8 +189,10 @@ const Step5FaultLoop = (): React.JSX.Element => {
       {is3ph && (
         <Card>
           <CardContent className="pt-4">
-            <div className="space-y-2 max-w-xs">
-              <Label>Z<sub>1ph-2ph</sub> (Ω)</Label>
+            <div className="max-w-xs space-y-2">
+              <Label>
+                Z<sub>1ph-2ph</sub> (Ω)
+              </Label>
               <Input
                 type="number"
                 step="0.001"
@@ -186,10 +208,14 @@ const Step5FaultLoop = (): React.JSX.Element => {
 
       <Card className="border-blue-200 bg-blue-50">
         <CardContent className="pt-4">
-          <p className="text-sm font-medium text-blue-900 mb-2">נוסחאות חישוב:</p>
-          <div className="text-sm text-blue-800 space-y-1">
-            <p>• Isc<sub>2ph</sub> = 230 / Z</p>
-            <p>• Isc<sub>3ph</sub> = 1.55 × Isc<sub>2ph</sub></p>
+          <p className="mb-2 text-sm font-medium text-blue-900">נוסחאות חישוב:</p>
+          <div className="space-y-1 text-sm text-blue-800">
+            <p>
+              • Isc<sub>2ph</sub> = 230 / Z
+            </p>
+            <p>
+              • Isc<sub>3ph</sub> = 1.55 × Isc<sub>2ph</sub>
+            </p>
           </div>
         </CardContent>
       </Card>

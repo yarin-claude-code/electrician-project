@@ -61,17 +61,27 @@ const Step1GeneralInfo = (): React.JSX.Element => {
             <Input
               id="clientName"
               value={state.clientName}
-              onChange={(e) => { updateState({ clientName: e.target.value }); setErrors((prev) => ({ ...prev, clientName: undefined })) }}
+              onChange={(e) => {
+                updateState({ clientName: e.target.value })
+                setErrors((prev) => ({ ...prev, clientName: undefined }))
+              }}
               placeholder="שם מלא"
               aria-invalid={!!errors.clientName}
             />
-            {errors.clientName && <p className="text-sm text-destructive mt-1" role="alert">{errors.clientName}</p>}
+            {errors.clientName && (
+              <p className="mt-1 text-sm text-destructive" role="alert">
+                {errors.clientName}
+              </p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="installationType">סוג מתקן *</Label>
             <Select
               value={state.installationType}
-              onValueChange={(v) => { updateState({ installationType: v as WizardState['installationType'] }); setErrors((prev) => ({ ...prev, installationType: undefined })) }}
+              onValueChange={(v) => {
+                updateState({ installationType: v as WizardState['installationType'] })
+                setErrors((prev) => ({ ...prev, installationType: undefined }))
+              }}
             >
               <SelectTrigger id="installationType" aria-invalid={!!errors.installationType}>
                 <SelectValue placeholder="בחר סוג מתקן" />
@@ -83,18 +93,29 @@ const Step1GeneralInfo = (): React.JSX.Element => {
                 <SelectItem value="other">אחר</SelectItem>
               </SelectContent>
             </Select>
-            {errors.installationType && <p className="text-sm text-destructive mt-1" role="alert">{errors.installationType}</p>}
+            {errors.installationType && (
+              <p className="mt-1 text-sm text-destructive" role="alert">
+                {errors.installationType}
+              </p>
+            )}
           </div>
           <div className="space-y-2 sm:col-span-2">
             <Label htmlFor="address">כתובת *</Label>
             <Input
               id="address"
               value={state.address}
-              onChange={(e) => { updateState({ address: e.target.value }); setErrors((prev) => ({ ...prev, address: undefined })) }}
+              onChange={(e) => {
+                updateState({ address: e.target.value })
+                setErrors((prev) => ({ ...prev, address: undefined }))
+              }}
               placeholder="רחוב, עיר"
               aria-invalid={!!errors.address}
             />
-            {errors.address && <p className="text-sm text-destructive mt-1" role="alert">{errors.address}</p>}
+            {errors.address && (
+              <p className="mt-1 text-sm text-destructive" role="alert">
+                {errors.address}
+              </p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="connectionSizeAmps">גודל חיבור (אמפר)</Label>
@@ -126,7 +147,7 @@ const Step1GeneralInfo = (): React.JSX.Element => {
               checked={state.hasGenerator}
               onCheckedChange={(v) => updateState({ hasGenerator: v })}
             />
-            <Label htmlFor="hasGenerator" className="cursor-pointer text-sm font-medium flex-1">
+            <Label htmlFor="hasGenerator" className="flex-1 cursor-pointer text-sm font-medium">
               כולל גנרטור (יוסיף שלב 8)
             </Label>
           </div>
@@ -182,42 +203,42 @@ const PersonCard = ({
   state,
   updateState,
 }: PersonCardProps): React.ReactNode => (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-base">{title}</CardTitle>
-      </CardHeader>
-      <CardContent className="grid gap-4 sm:grid-cols-3">
-        <div className="space-y-2">
-          <Label htmlFor={nameKey}>שם</Label>
-          <Input
-            id={nameKey}
-            value={state[nameKey] as string}
-            onChange={(e) => updateState({ [nameKey]: e.target.value })}
-            placeholder="שם מלא"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor={phoneKey}>טלפון</Label>
-          <Input
-            id={phoneKey}
-            value={state[phoneKey] as string}
-            onChange={(e) => updateState({ [phoneKey]: e.target.value })}
-            placeholder="05X-XXXXXXX"
-            dir="ltr"
-            type="tel"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor={emailKey}>אימייל</Label>
-          <Input
-            id={emailKey}
-            value={state[emailKey] as string}
-            onChange={(e) => updateState({ [emailKey]: e.target.value })}
-            placeholder="example@email.com"
-            dir="ltr"
-            type="email"
-          />
-        </div>
-      </CardContent>
-    </Card>
+  <Card>
+    <CardHeader>
+      <CardTitle className="text-base">{title}</CardTitle>
+    </CardHeader>
+    <CardContent className="grid gap-4 sm:grid-cols-3">
+      <div className="space-y-2">
+        <Label htmlFor={nameKey}>שם</Label>
+        <Input
+          id={nameKey}
+          value={state[nameKey] as string}
+          onChange={(e) => updateState({ [nameKey]: e.target.value })}
+          placeholder="שם מלא"
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor={phoneKey}>טלפון</Label>
+        <Input
+          id={phoneKey}
+          value={state[phoneKey] as string}
+          onChange={(e) => updateState({ [phoneKey]: e.target.value })}
+          placeholder="05X-XXXXXXX"
+          dir="ltr"
+          type="tel"
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor={emailKey}>אימייל</Label>
+        <Input
+          id={emailKey}
+          value={state[emailKey] as string}
+          onChange={(e) => updateState({ [emailKey]: e.target.value })}
+          placeholder="example@email.com"
+          dir="ltr"
+          type="email"
+        />
+      </div>
+    </CardContent>
+  </Card>
 )

@@ -16,6 +16,7 @@ You are a Next.js 16 App Router expert. Audit and fix Next.js patterns in this p
 ## Step 1: Server vs Client Component Audit
 
 Grep for `"use client"` directives:
+
 ```
 pattern: "use client"
 path: src/
@@ -30,6 +31,7 @@ For pages without `"use client"`, verify they don't import client-only code.
 ## Step 2: Loading + Error Boundaries
 
 Check each route in `src/app/(app)/`:
+
 - Is there a `loading.tsx` alongside the `page.tsx`?
 - Is there an `error.tsx` for catching runtime errors?
 - Is there a `not-found.tsx` for 404 cases?
@@ -37,24 +39,28 @@ Check each route in `src/app/(app)/`:
 If missing, create minimal Hebrew-language versions:
 
 **loading.tsx template:**
+
 ```tsx
 export default function Loading() {
   return (
-    <div className="flex items-center justify-center h-64">
-      <div className="text-muted-foreground text-sm">טוען...</div>
+    <div className="flex h-64 items-center justify-center">
+      <div className="text-sm text-muted-foreground">טוען...</div>
     </div>
   )
 }
 ```
 
 **error.tsx template:**
+
 ```tsx
 'use client'
 export default function Error({ reset }: { reset: () => void }) {
   return (
-    <div className="flex flex-col items-center justify-center h-64 gap-4">
+    <div className="flex h-64 flex-col items-center justify-center gap-4">
       <p className="text-destructive">אירעה שגיאה</p>
-      <button onClick={reset} className="text-sm underline">נסה שוב</button>
+      <button onClick={reset} className="text-sm underline">
+        נסה שוב
+      </button>
     </div>
   )
 }
@@ -65,6 +71,7 @@ export default function Error({ reset }: { reset: () => void }) {
 ## Step 3: Metadata Exports
 
 Every `page.tsx` should export metadata:
+
 ```ts
 export const metadata: Metadata = {
   title: '...',
@@ -79,6 +86,7 @@ Check `src/app/(app)/dashboard/page.tsx` and auth pages. Add missing metadata ex
 ## Step 4: Route Handler Review
 
 Read `src/app/api/` route files. Verify:
+
 - Auth is checked at the top (user session validated before any DB access)
 - Returns proper HTTP status codes (400, 401, 404, 500)
 - Error responses are JSON `{ error: string }`
@@ -89,6 +97,7 @@ Read `src/app/api/` route files. Verify:
 ## Step 5: Data Fetching Patterns
 
 In server components, data should be fetched directly (no `useEffect`). In client components, data should come from:
+
 - Props passed from a server component parent, OR
 - A custom hook with proper loading/error states
 

@@ -33,7 +33,9 @@ export default async function DashboardPage(): Promise<React.ReactElement> {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   if (supabaseUrl?.startsWith('http')) {
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
     const { data: raw } = await supabase
       .from('inspections')
       .select('*')
@@ -45,9 +47,13 @@ export default async function DashboardPage(): Promise<React.ReactElement> {
   }
 
   const total = inspections.length
-  const completed = inspections.filter(i => i.status === 'completed' || i.status === 'submitted').length
-  const drafts = inspections.filter(i => i.status === 'draft' || i.status === 'in_progress').length
-  const rejected = inspections.filter(i => i.approval_status === 'rejected').length
+  const completed = inspections.filter(
+    (i) => i.status === 'completed' || i.status === 'submitted'
+  ).length
+  const drafts = inspections.filter(
+    (i) => i.status === 'draft' || i.status === 'in_progress'
+  ).length
+  const rejected = inspections.filter((i) => i.approval_status === 'rejected').length
   const isDemo = !supabaseUrl?.startsWith('http')
 
   return (
@@ -56,7 +62,7 @@ export default async function DashboardPage(): Promise<React.ReactElement> {
         <div>
           <h1 className="text-2xl font-bold text-foreground">לוח בקרה</h1>
           {isDemo && (
-            <p className="text-xs text-amber-600 mt-1 flex items-center gap-1">
+            <p className="mt-1 flex items-center gap-1 text-xs text-amber-600">
               <AlertTriangle className="h-3 w-3" />
               מצב תצוגה — נתוני דמו. חבר Supabase לנתונים אמיתיים.
             </p>
@@ -72,10 +78,29 @@ export default async function DashboardPage(): Promise<React.ReactElement> {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <KpiCard label='סה"כ בדיקות' value={total} icon={<FileText className="h-5 w-5 text-primary" />} />
-        <KpiCard label="הושלמו" value={completed} icon={<CheckCircle className="h-5 w-5 text-emerald-600" />} valueColor="text-emerald-600" />
-        <KpiCard label="טיוטות" value={drafts} icon={<Clock className="h-5 w-5 text-amber-500" />} valueColor="text-amber-500" />
-        <KpiCard label="נדחו" value={rejected} icon={<AlertTriangle className="h-5 w-5 text-destructive" />} valueColor="text-destructive" />
+        <KpiCard
+          label='סה"כ בדיקות'
+          value={total}
+          icon={<FileText className="h-5 w-5 text-primary" />}
+        />
+        <KpiCard
+          label="הושלמו"
+          value={completed}
+          icon={<CheckCircle className="h-5 w-5 text-emerald-600" />}
+          valueColor="text-emerald-600"
+        />
+        <KpiCard
+          label="טיוטות"
+          value={drafts}
+          icon={<Clock className="h-5 w-5 text-amber-500" />}
+          valueColor="text-amber-500"
+        />
+        <KpiCard
+          label="נדחו"
+          value={rejected}
+          icon={<AlertTriangle className="h-5 w-5 text-destructive" />}
+          valueColor="text-destructive"
+        />
       </div>
 
       {/* Charts */}
@@ -106,11 +131,16 @@ interface KpiCardProps {
   valueColor?: string
 }
 
-const KpiCard = ({ label, value, icon, valueColor = 'text-foreground' }: KpiCardProps): ReactNode => (
+const KpiCard = ({
+  label,
+  value,
+  icon,
+  valueColor = 'text-foreground',
+}: KpiCardProps): ReactNode => (
   <Card>
     <CardContent className="p-4">
-      <div className="flex items-center justify-between mb-2">
-        <p className="text-xs text-muted-foreground leading-tight">{label}</p>
+      <div className="mb-2 flex items-center justify-between">
+        <p className="text-xs leading-tight text-muted-foreground">{label}</p>
         {icon}
       </div>
       <p className={`text-3xl font-bold ${valueColor}`}>{value}</p>

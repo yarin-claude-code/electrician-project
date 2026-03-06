@@ -85,7 +85,7 @@ export default function LoginPage(): React.ReactElement {
           </form>
           <p className="mt-4 text-center text-sm text-muted-foreground">
             אין לך חשבון?{' '}
-            <Link href="/auth/register" className="text-primary hover:underline font-medium">
+            <Link href="/auth/register" className="font-medium text-primary hover:underline">
               הרשמה
             </Link>
           </p>

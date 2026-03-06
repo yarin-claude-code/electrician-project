@@ -76,8 +76,7 @@ When `NEXT_PUBLIC_SUPABASE_URL` is missing or invalid, stub clients return empty
 
 9-step inspection wizard managed by `WizardContext`:
 
-1. General Info 2. Visual Checks 3. Instruments 4. Panels
-2. Fault Loop 6. Defects 7. Recommendations 8. Generator (optional) 9. Review & Sign
+1. General Info | 2. Visual Checks | 3. Instruments | 4. Panels | 5. Fault Loop | 6. Defects | 7. Recommendations | 8. Generator (optional) | 9. Review & Sign
 
 - Auto-saves on step navigation + debounced 10s auto-save
 - Dual persistence: IndexedDB (always) + Supabase (when online)

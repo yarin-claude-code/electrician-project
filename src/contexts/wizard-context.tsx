@@ -91,17 +91,25 @@ export const WizardProvider = ({
   const [isSaving, setIsSaving] = useState(false)
   const [isOnline, setIsOnline] = useState(true)
   const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const isOnlineRef = useRef(true)
 
   const totalSteps = state.hasGenerator ? 9 : 8
 
   // Compute completion %
-  const completionPercent = Math.round((currentStep / totalSteps) * 100)
+  const completionPercent = Math.round(((currentStep - 1) / totalSteps) * 100)
 
   // Online status
   useEffect(() => {
     setIsOnline(navigator.onLine)
-    const on = () => setIsOnline(true)
-    const off = () => setIsOnline(false)
+    isOnlineRef.current = navigator.onLine
+    const on = () => {
+      setIsOnline(true)
+      isOnlineRef.current = true
+    }
+    const off = () => {
+      setIsOnline(false)
+      isOnlineRef.current = false
+    }
     window.addEventListener('online', on)
     window.addEventListener('offline', off)
     return () => {
@@ -127,8 +135,8 @@ export const WizardProvider = ({
       // Always save to IndexedDB
       await saveDraft(inspectionId, newState as unknown as Record<string, unknown>)
 
-      // Sync to Supabase if online
-      if (navigator.onLine) {
+      // Sync to Supabase if online (use ref to avoid stale closure)
+      if (isOnlineRef.current) {
         const supabase = createClient()
         await supabase
           .from('inspections')

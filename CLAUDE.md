@@ -42,7 +42,7 @@ src/
 │   │       ├── new/page.tsx    # Creates DB record → redirect to [id]
 │   │       └── [id]/page.tsx   # WizardProvider + WizardShell
 │   ├── auth/                   # login + register pages
-│   └── api/inspections/[id]/report/route.tsx  # PDF generation endpoint
+│   └── api/reports/[id]/route.tsx  # PDF generation endpoint
 ├── components/
 │   ├── ui/                     # shadcn/ui primitives
 │   ├── wizard/                 # 9 wizard step components (step1–step9)

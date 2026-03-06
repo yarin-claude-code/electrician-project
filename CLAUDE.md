@@ -42,7 +42,7 @@ src/
 │   │       ├── new/page.tsx    # Creates DB record → redirect to [id]
 │   │       └── [id]/page.tsx   # WizardProvider + WizardShell
 │   ├── auth/                   # login + register pages
-│   └── api/inspections/[id]/report/route.tsx  # PDF generation endpoint
+│   └── api/reports/[id]/route.tsx  # PDF generation endpoint
 ├── components/
 │   ├── ui/                     # shadcn/ui primitives
 │   ├── wizard/                 # 9 wizard step components (step1–step9)
@@ -76,8 +76,7 @@ When `NEXT_PUBLIC_SUPABASE_URL` is missing or invalid, stub clients return empty
 
 9-step inspection wizard managed by `WizardContext`:
 
-1. General Info 2. Visual Checks 3. Instruments 4. Panels
-2. Fault Loop 6. Defects 7. Recommendations 8. Generator (optional) 9. Review & Sign
+1. General Info | 2. Visual Checks | 3. Instruments | 4. Panels | 5. Fault Loop | 6. Defects | 7. Recommendations | 8. Generator (optional) | 9. Review & Sign
 
 - Auto-saves on step navigation + debounced 10s auto-save
 - Dual persistence: IndexedDB (always) + Supabase (when online)

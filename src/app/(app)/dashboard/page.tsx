@@ -13,6 +13,9 @@ import {
   DEMO_MONTHLY,
   DEMO_DEFECTS,
   buildStatusData,
+  buildCategoryData,
+  buildMonthlyData,
+  buildDefectsData,
 } from '@/lib/dashboard-data'
 
 import type { Metadata } from 'next'
@@ -36,10 +39,14 @@ export default async function DashboardPage(): Promise<React.ReactElement> {
     const {
       data: { user },
     } = await supabase.auth.getUser()
+    if (!user) {
+      const { redirect } = await import('next/navigation')
+      redirect('/auth/login')
+    }
     const { data: raw } = await supabase
       .from('inspections')
       .select('*')
-      .eq('inspector_id', user!.id)
+      .eq('inspector_id', user.id)
       .order('created_at', { ascending: false })
       .limit(INSPECTION_LIST_LIMIT)
     inspections = (raw as Inspection[]) ?? []
@@ -106,9 +113,9 @@ export default async function DashboardPage(): Promise<React.ReactElement> {
       {/* Charts */}
       <DashboardCharts
         statusData={statusData}
-        categoryData={DEMO_CATEGORY}
-        monthlyData={DEMO_MONTHLY}
-        topDefects={DEMO_DEFECTS}
+        categoryData={isDemo ? DEMO_CATEGORY : buildCategoryData(inspections)}
+        monthlyData={isDemo ? DEMO_MONTHLY : buildMonthlyData(inspections)}
+        topDefects={isDemo ? DEMO_DEFECTS : buildDefectsData(inspections)}
       />
 
       {/* Recent inspections list */}

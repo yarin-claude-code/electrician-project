@@ -16,12 +16,14 @@ export default async function NewInspectionPage(): Promise<never> {
   } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('inspections')
     .insert({ inspector_id: user.id, status: 'draft' })
     .select('id')
     .single()
 
-  if (!data) redirect('/dashboard')
+  if (error || !data) {
+    redirect(`/dashboard?error=${encodeURIComponent(error?.message ?? 'יצירת בדיקה נכשלה')}`)
+  }
   redirect(`/inspections/${(data as { id: string }).id}`)
 }

@@ -184,6 +184,66 @@ export interface StatusDataItem {
   color: string
 }
 
+const INSTALLATION_TYPE_MAP: Record<string, string> = {
+  residential: 'מגורים',
+  commercial: 'מסחרי',
+  industrial: 'תעשייתי',
+  other: 'אחר',
+}
+
+const HEBREW_MONTHS = [
+  'ינו',
+  'פבר',
+  'מרץ',
+  'אפר',
+  'מאי',
+  'יונ',
+  'יול',
+  'אוג',
+  'ספט',
+  'אוק',
+  'נוב',
+  'דצמ',
+]
+
+export const buildCategoryData = (
+  inspections: Inspection[]
+): { category: string; count: number }[] => {
+  const counts: Record<string, number> = {}
+  for (const i of inspections) {
+    const type = i.installation_type ?? 'other'
+    const label = INSTALLATION_TYPE_MAP[type] ?? type
+    counts[label] = (counts[label] ?? 0) + 1
+  }
+  return Object.entries(counts)
+    .map(([category, count]) => ({ category, count }))
+    .sort((a, b) => b.count - a.count)
+}
+
+export const buildMonthlyData = (inspections: Inspection[]): { month: string; count: number }[] => {
+  const counts: Record<string, number> = {}
+  for (const i of inspections) {
+    const date = new Date(i.created_at)
+    const key = `${date.getFullYear()}-${String(date.getMonth()).padStart(2, '0')}`
+    counts[key] = (counts[key] ?? 0) + 1
+  }
+  return Object.entries(counts)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .slice(-6)
+    .map(([key, count]) => {
+      const monthIndex = parseInt(key.split('-')[1], 10)
+      return { month: HEBREW_MONTHS[monthIndex], count }
+    })
+}
+
+export const buildDefectsData = (
+  _inspections: Inspection[]
+): { defect: string; count: number }[] => {
+  // Defect aggregation requires querying the defects table separately.
+  // For now, return empty array — charts will show "no data" for live users.
+  return []
+}
+
 export const buildStatusData = (inspections: Inspection[]): StatusDataItem[] =>
   [
     {

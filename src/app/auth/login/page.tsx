@@ -33,6 +33,7 @@ export default function LoginPage(): React.ReactElement {
     } else {
       router.push('/dashboard')
       router.refresh()
+      setLoading(false)
     }
   }
 

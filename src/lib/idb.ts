@@ -34,6 +34,9 @@ const DB_VERSION = 1
 let dbPromise: Promise<IDBPDatabase<InspectionDB>> | null = null
 
 const getDB = (): Promise<IDBPDatabase<InspectionDB>> => {
+  if (typeof window === 'undefined') {
+    return Promise.reject(new Error('IndexedDB is not available on the server'))
+  }
   if (!dbPromise) {
     dbPromise = openDB<InspectionDB>(DB_NAME, DB_VERSION, {
       upgrade(db) {
